@@ -1,0 +1,96 @@
+		.calendar {
+			font-family: Arial; font-size: 12px;
+		}
+		table.calendar {
+			margin: auto; border-collapse: collapse; width: 100%;
+		}
+		.calendar th.title_cell {
+			font-size: 20px;
+			line-height: 1.6;
+			color: rgb(56, 60, 93);
+			text-align: center;
+			background-color: transparent;
+			padding-top: 12px;
+			margin-bottom: 9px;
+		}
+		.calendar .days td {
+			height: 20px; padding: 4px;
+			border-color: #999999;
+			border-width:1px 5px 1px 1px; 
+			border-style:solid double solid solid;
+			vertical-align: top;
+			background-color: #DDEEFF;
+			text-align: center;
+		}
+		.calendar .periods_title td {
+			height: 20px; padding: 4px;
+			border: 1px solid #999999;
+			vertical-align: top;
+			color: rgb(56, 60, 93);
+			text-align: center;
+			font-size: 14px;
+			background-color: #EEEEFF;
+		}
+		.calendar .days_title td {
+			height: 20px; padding: 4px;
+			border-color: #999;
+			border-width:1px 5px 1px 1px; 
+			border-style:solid double solid solid;
+			vertical-align: top;
+			color: rgb(56, 60, 93);
+			text-align: center;
+			font-size: 14px;
+			background-color: #EEEEFF;
+		}
+		.calendar td#period_mid_day {
+			border-width:1px 5px 1px 1px; 
+			border-style:solid double solid solid;
+		}
+		.calendar .child td {
+			height: 20px; padding: 4px;
+			border: 1px solid #999999;
+			vertical-align: top;
+			background-color: #EEEEFF;
+		}
+		.calendar .child td.mid_day {
+			border-width:1px 5px 1px 1px; 
+			border-style:solid double solid solid;
+		}
+		.calendar .child td.child_name {
+			background-color: #EEEEDD;
+			border-color: #999999;
+			border-width:1px 5px 1px 1px; 
+			border-style:solid double solid solid;
+		}
+		.calendar .child td.periodoff {
+			background-color: #EEEEDD;
+			border: 1px solid #999999;
+		}
+		.calendar .child td.mid_periodoff {
+			background-color: #EEEEDD;
+			border-color: #999999;
+			border-width:1px 5px 1px 1px; 
+			border-style:solid double solid solid;
+		}
+		.calendar .child td.period_1 {
+			background-color: #ACF28A;
+		}
+		.calendar .child td.period_2 {
+			background-color: #2A7E8A;
+		}
+		.calendar .child td.period_3 {
+			background-color: #A6233C;
+		}
+		.calendar .child .content {
+ 			display: none;  
+		}
+		.calendar .child td.period:hover {
+			background-color: #ACF28A;
+		}
+		.calendar .child td.period_1:hover {
+			background-color: #EEEEFF;
+		}
+		.calendar .highlight {
+			font-weight: bold; color: #0000FF;
+		}
+		

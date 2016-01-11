@@ -1,0 +1,50 @@
+V2013.08
+*********************************
+Feature:
+--------
+- Bug effacement des numeros de cheque
+- Tableau de bord mensuel - ajout des colonnes de paiement
+- Ajout de la selection du mois dans la page principale
+- Ajout de modification des payments depuis la page des facturations
+- Refactoring du calcul des couts
+- Possibilite de rendre des enfants inactifs (apres le CM2) - L'inscription n'est plus possible
+- Feuille d'appel du matin
+- Ajout d'un status recu au paiement
+- Page de visualisation de l'historique des paimements (avec des bug!!)
+- Changement des iformation des contacts
+- Ajout d'un statut "Animateur"
+	Parent:
+		* Declarer des reservations
+		* Voir/imprimer son calendrier
+		* Ajouter/modifier ses enfants
+		* Ajouter/modifier ses paiements
+		* Modifier ses informations (famille)
+	Animateur:
+		* Tout ce que faire "Parent"
+		* Voir/imprimer tous les calendriers
+		* Ajouter des depassements
+		* Ajouter/modifier un paiment pour tous les parents
+		* Imprimer les feuilles de presences
+		* Imprimer le recapitulatif hebdomadaire
+	Administrateur:
+		* Tout ce que peut faire "Animateur"
+		* Declarer les vacances
+		* Cloturer des reservations
+		* Voir la liste des familles
+		* Ajouter/modifier des enfants pour tous les parents
+		* Ajouter des 'news'
+		* Ajouter/modifier une famille
+	
+
+DB modification:
+----------------
+ALTER TABLE `child` ADD `is_active` BOOLEAN NOT NULL AFTER `name`;
+UPDATE `child`.`child` SET `is_active` = '1';
+UPDATE  `creche`.`payment` SET  `status` =  '3' WHERE  `status` =  '2';
+UPDATE  `creche`.`users` SET  `privilege` =  '3' WHERE  `users`.`privilege` =2;
+
+V initial
+*********************************
+A partir de Eliselab, utilisation de codeignitor framewoks
+
+

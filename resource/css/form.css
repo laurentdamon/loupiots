@@ -1,0 +1,32 @@
+.form {
+	background:#e4e4e4;
+	margin:15px;
+	width:332px;
+	border:thin solid #d0d0d0;  /* This is the outer border, inner border will be added to the div contained within*/
+	border-radius:8px; /* Add rounded corners to the form*/
+	-moz-border-radius:8px;
+	-webkit-border-radius:8px; float:left;
+	box-shadow: 5px 5px 7px #888888; /* Add shadow to the form – First two values are shadow offset, third is blur radius*/
+	-webkit-box-shadow: 5px 5px 7px #888888;
+	-moz-box-shadow: 5px 5px 7px #888888;
+}
+.form div {
+	padding:15px; /* Add some spacing to the edges of the form */
+	border:thin #f4f4f4 solid;  /* Inner border */
+	float:left;
+	border-radius:8px; /* Add rounded corners to the inner border*/
+	-moz-border-radius:8px;
+	-webkit-border-radius:8px;
+	width:300px;
+}
+.form p{
+	color:#9a9999;
+}
+.form label{
+	color:#9a9999;
+}
+.InputSubmit {
+	float:right;
+	margin-top:15px;
+	
+}
