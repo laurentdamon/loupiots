@@ -9,6 +9,8 @@ class resa extends CI_Controller {
 		$this->load->model('User_model');
 		$this->load->model('Period_model');
 		$this->load->model('Days_model');
+		$this->load->model('Cost_model');
+		$this->load->model('Child_model');
 		$this->load->helper('form');
 		$this->load->library('form_validation');
 	}
@@ -21,6 +23,8 @@ class resa extends CI_Controller {
 			$resaData=$this->Resa_model->setResaFromPostData($_POST);
 			if ($resaData) {
 				$output = $this->Resa_model->create($resaData);
+				$child = $this->Child_model->get_child_by_id($resaData["child_id"]);
+				/*$output["sql"] = */$this->Cost_model->persistCost($_POST["month"], $_POST["year"], $child["user_id"]);
 			} else {
 				$output=false;
 			}
@@ -36,6 +40,8 @@ class resa extends CI_Controller {
 			$resa=$this->Resa_model->get_resa_where($resa);
 			if ($this->Resa_model->delete($resa[0]["id"])) {
 				$output_string=true;
+				$child = $this->Child_model->get_child_by_id($resa[0]["child_id"]);
+				$this->Cost_model->persistCost($_POST["month"], $_POST["year"], $child["user_id"]);
 			} else {
 				$output_string=false;
 			}
@@ -46,7 +52,7 @@ class resa extends CI_Controller {
 	}
 
 	public function get() {
-		//$this->output->enable_profiler(TRUE);
+//		$this->output->enable_profiler(TRUE);
 		
 		$this->Calendar_model->init($_REQUEST['user_id']);
 		$query = $this->db->get_where('child', array('user_id' => $_REQUEST['user_id']));

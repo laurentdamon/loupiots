@@ -75,7 +75,7 @@ $(document).ready(function() {
 					child : data[4]
 				},
 				success : function(result) {
-//alert("success "+result);
+//alert("success period "+result);
 					var resas = jQuery.parseJSON(result);
 					$.each(resas, function(property, value) {
 						var dateStr=value.date.split(" ");
@@ -131,8 +131,9 @@ $(document).ready(function() {
 							}
 						}
 					})
-
-					
+				},
+				error : function(result) {
+//					alert("failure period "+result);
 				}
 			});
 	});
@@ -155,6 +156,7 @@ $(document).ready(function() {
 					child : data[4]
 				},
 				success : function(result) {
+//alert("success period1 "+result);
 					aObj.attr("class", "period");
 					$.ajax({
 						url : getCostURL,
@@ -195,6 +197,9 @@ $(document).ready(function() {
 							}
 						}
 					})
+				},
+				error : function(result) {
+//					alert("failure period1 "+result);
 				}
 			});
 	});
@@ -204,6 +209,7 @@ $(document).ready(function() {
 		text = $.trim(text);
 		var data = text.split("-");
 		var aObj = $(this);
+//alert("period3 "+aObj);
 		var $defer = 
 			$.ajax({
 				url : deleteURL,
@@ -217,6 +223,7 @@ $(document).ready(function() {
 					child : data[4]
 				},
 				success : function(result) {
+//alert("success period3 "+result);
 					aObj.attr("class", "period");
 					$.ajax({
 						url : getCostURL,
@@ -257,6 +264,9 @@ $(document).ready(function() {
 							}
 						}
 					})
+				},
+				error : function(result) {
+//					alert("failure period3 "+result);
 				}
 			});
 

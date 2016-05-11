@@ -59,7 +59,7 @@ class Cost_model extends CI_Model {
 	function persistCost($month, $year, $userId) {
 		$costCurrent = $this->getCost($year, $month, $userId);
 		$cost['paid'] = $costCurrent['paid'];
- 		$cost['debt'] = $costCurrent['debt'];
+		$cost['debt'] = $costCurrent['debt'];
  		$date = mktime(0, 0, 0, $month, 1, $year);
 		$cost['month_paided'] = date("Y-m-d", $date);
  		$cost['user_id'] = $userId;
@@ -69,6 +69,8 @@ class Cost_model extends CI_Model {
 		} else {
 			$this->create($cost);
 		}
+//$return = $this->db->last_query();
+//$return = $costCurrent;
 		
 		//Update cost next month if exists
 		$nextMonth=$month+1;
@@ -81,6 +83,7 @@ class Cost_model extends CI_Model {
 		if($DBNextCost) {
 			$this->persistCost($nextMonth, $nextYear, $userId);
 		}
+//return $return;
 	}
 	
 	function getCost($year, $month, $userId) {
@@ -89,13 +92,6 @@ class Cost_model extends CI_Model {
 		$cost['sum']['depassementPrev'] = 0;
 		$cost['sum']['costPrev'] = 0;
 		
-// 		if ($month==1) {
-// 			$prevMonth=12;
-// 			$prevYear=$year-1;
-// 		} else {
-// 			$prevMonth=$month;
-// 			$prevYear=$year;
-// 		}
 		$prevDate = strtotime( $year."-".($month-1)."-01" );
 		$prevMonth = date("m", $prevDate);
 		$prevYear = date("Y", $prevDate);
@@ -133,7 +129,7 @@ class Cost_model extends CI_Model {
 			$cost['paid'] = 0;
 		}	
 				
- 		$lastMonthCost = current($this->Cost_model->get_cost_where(array('user_id' => $userId, 'YEAR(month_paided)' => $prevYear, 'MONTH(month_paided)' => $prevMonth )));
+		$lastMonthCost = current($this->Cost_model->get_cost_where(array('user_id' => $userId, 'YEAR(month_paided)' => $prevYear, 'MONTH(month_paided)' => $prevMonth )));
  		if (isset($lastMonthCost["debt"])) {
  			$cost['debtPrev'] = $lastMonthCost["debt"];
  			$cost['sum']['total'] = $cost['sum']['depassementPrev'] + $cost['sum']['cost'] + $cost['debtPrev'];

@@ -87,8 +87,7 @@ class Payment_model extends CI_Model {
 			$payment["status"] = $post['status'];
 		} else {
 			$payment["status"] = 1;
-		}
-		
+		}		
 		return $payment;
 	}
 	

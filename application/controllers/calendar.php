@@ -49,6 +49,7 @@ class calendar extends CI_Controller {
 		
 	}
 
+	//obsolete not used since week reservation
 	public function validateResa() {
 		$this->output->enable_profiler(TRUE);
 		
@@ -87,7 +88,6 @@ class calendar extends CI_Controller {
 		
  		$users = $this->User_model->get_users(TRUE);
  		foreach ($users as $user) {
-// 			$data['userId'][] = $user["id"];
  			$this->Cost_model->persistCost($month, $year, $user["id"]);			
  		}
 				
