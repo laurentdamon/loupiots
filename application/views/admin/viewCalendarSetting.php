@@ -5,6 +5,7 @@
 // print_r($persist);
 ?>
 
+//obsolete not used since week reservation
 <div class="holder_content">
 	<h3>Cloture des inscriptions</h3>
 

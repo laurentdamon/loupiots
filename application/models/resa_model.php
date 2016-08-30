@@ -130,7 +130,7 @@ class Resa_model extends CI_Model {
 		
 		if ($date >= $closedDate) {
 			$resa['resa_type'] = "1";   								// normal
-		} elseif ($this->session->userdata('privilege')>=2) {			// validee
+		} elseif ($this->session->userdata('privilege')>=2) {			
 			$resa['resa_type'] = "3";									// rajout
 		} else {
 			return FALSE;
