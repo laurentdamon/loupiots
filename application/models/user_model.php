@@ -170,18 +170,22 @@ class User_model extends CI_Model
 		if ($id === FALSE) {
 			$query = $this->db->get($this->user_table);
 			foreach ($query->result_array() as $user) {
-				$where = array('user_id' => $user["id"]);
+			    $where = array('user_id' => $user["id"]);
 				if ($onlyActiveChild) {
 					$where['is_active']=1;
 				}
+				$children_size = 0;
 				$query = $this->db->get_where('child', $where);
-				$children = $query->result_array();
-				foreach ($children as $child) {
+				foreach ($query->result_array() as $child) {
 					$classNum=$child['class_id'];
 					$child['class']= $this->Class_model->get_class($classNum);
 					$user['children'][] = $child;
+					$children_size = sizeof($user['children']);
 				}
-				$users[] = $user;
+				
+				if (!$onlyActiveChild || ($onlyActiveChild && $children_size>0)) {
+				    $users[] = $user;
+				}
 			}
 		} else {
 			$query = $this->db->get_where($this->user_table, array('id' => $id));

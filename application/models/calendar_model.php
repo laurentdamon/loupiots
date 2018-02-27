@@ -8,7 +8,6 @@ class Calendar_model extends CI_Model {
 	}
 	
 	function init($userId) {
-		//$periods = $this->Period_model->get_periods();
 		$periods = $this->Days_model->get_daysPeriods();
 		
 		$this->conf = array(
@@ -104,7 +103,6 @@ class Calendar_model extends CI_Model {
 		$cal_data = array();
 		
 		$cal_data['users'] = $this->User_model->get_users(TRUE, $id);
-		//$cal_data['periods'] = $this->Period_model->get_periods();
 		$cal_data['periods'] = $this->Days_model->get_daysPeriods();
 		$cal_data['resas']= $this->Resa_model->get_resa_where(array('YEAR(date)' => $year, 'MONTH(date)' => $month));
 		$holidays = $this->get_holidays_where(array('YEAR(date)' => $year, 'MONTH(date)' => $month));
@@ -112,14 +110,12 @@ class Calendar_model extends CI_Model {
 			$cal_data['holidays'][] = strtotime($currentHolidays["date"]);
 		}
 		return $cal_data;
-		
 	}
 	
 	function generate ($id, $year, $month) {
 		$this->load->library('calendar', $this->conf);
 		$cal_data = $this->get_calendar_data($id, $year, $month);
 		return $this->calendar->generate($year, $month, $cal_data);
-		
 	}
 	
 	function add_holidays($start, $end) {
