@@ -16,7 +16,7 @@ class calendar extends CI_Controller {
 	}
 
 	function index() {
-		$this->output->enable_profiler(TRUE);
+//		$this->output->enable_profiler(TRUE);
 		
 		$this->load->library('form_validation');
 		

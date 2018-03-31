@@ -9,6 +9,8 @@
 	<div>
 		<label for="weekCall">Date:</label> 
 		<input name="weekCall" id="dateSel" class="InputDate" /> <br/>
+		<label for="paymentMonth">Familles actives seulement</label>
+		<?php echo form_checkbox('onlyActive', TRUE, $onlyActive);?>
 		
 		<input class="InputSubmit" type="submit" value="Generer"/>
 	</div>

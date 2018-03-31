@@ -305,7 +305,6 @@ class CI_Calendar {
 				$out .= "\n";
 				for ($i = 0; $i < 7; $i++) {
 					$currentDay=$rowDay[$i];
-//					$period=$i+1;
 					$day_name = $day_names[($start_day + $i) %7];
 					if ($day_name=='Samedi' || $day_name=='Dimanche') {
 						$out .= "<td class='mid_periodoff'>&nbsp;</td>";
@@ -328,7 +327,7 @@ class CI_Calendar {
 								} else {
 									$resaType="period";
 									foreach($resas as $resa) {
-										if ($resa["child_id"]==$childNum && $resa["date"]==$date && $resa["period_id"]==$period["id"]) {
+                                        if ($resa["child_id"]==$childNum && $resa["date"]==$date && $resa["period_id"]==$period["periodId"]) {
 											$resaType="period_".$resa["resa_type"];
 											break;
 										} else {
@@ -388,6 +387,10 @@ class CI_Calendar {
 		$out .= "\n";
 		$out .= $this->temp['table_close'];
 
+//		$out .= print_r($outtest);
+//		$out .= "test\n";
+//		$out .= print_r($outperiod);
+		
 		return $out;
 	}
 

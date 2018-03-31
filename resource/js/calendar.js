@@ -13,7 +13,7 @@ $(document).ready(function() {
 			dataType : "html",
 			cache : false,
 			success : function(result) {
-//alert("success "+result);
+//alert("success "+getData);
 
 			$("#calendarContent").append(result);
 			}

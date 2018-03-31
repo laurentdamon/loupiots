@@ -34,14 +34,21 @@ class Days_model extends CI_Model {
 	}
 	
 	function get_daysPeriods() {
+	    $query = $this->db->query("SELECT * FROM period p, days d WHERE p.id=d.periodId order by d.day, d.periodId");
+	    foreach($query->result_array() AS $row) {
+	        $data[$row['day']][] = $row;
+	    }
+	    return $data;
+	}
+/*	
+	function get_daysPeriods2() {
 		$days = $this->get_days();
 		$periodDays = array();
+		
 		foreach ($days as $day ) {
 			$period=$this->Period_model->get_periods($day["periodId"]);
 			if (isset($periodDays[$day["day"]])) {
 				for($i=sizeof($periodDays[$day["day"]])-1; $i>=0; $i--) {
-					//foreach ($periodDays[$day["day"]] as $currentPeriodDay) {
-
 					if ($period["start_time"] < $periodDays[$day["day"]][$i]["start_time"]) {
 						$periodDays[$day["day"]][$i+1]=$periodDays[$day["day"]][$i];
 						$periodDays[$day["day"]][$i]=$period;
@@ -56,6 +63,6 @@ class Days_model extends CI_Model {
 		}	
 		return $periodDays;
 	}
-	
+*/	
 }
 ?>

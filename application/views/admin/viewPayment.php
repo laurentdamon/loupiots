@@ -7,6 +7,8 @@
 		<label for="paymentMonth">Mois pay&eacute;</label>
    		<?php echo form_dropdown('month', generate_options_array(0,12,'callback_month'), $month, 'class="InputSelect"'); ?>
    		<?php echo form_dropdown('year', generate_options_array(date('Y')+1,2010), $year, 'class="InputSelect"');?>
+		<br><label for="paymentMonth">Familles actives seulement</label>
+   		<?php echo form_checkbox('onlyActive', TRUE, $onlyActive);?>
    		<input class="InputSubmit" type="submit" value="Selectionner"/>
 	</div>
 </form>

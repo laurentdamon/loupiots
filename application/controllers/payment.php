@@ -189,16 +189,19 @@ class payment extends CI_Controller {
 		//initialisation
 		$year = $this->input->get_post('year');
 		$month = $this->input->get_post('month');
+		$onlyActive = $this->input->get_post('onlyActive');
 		if ($month=="" || $year=="") {
 			$year=date("Y");
 			$month=date("n");
+			$onlyActive = TRUE;
 		}
 		$data['month'] = $month;
 		$data['year'] = $year;
+		$data['onlyActive'] = $onlyActive;
 		
 		$data['title'] = 'Liste des paiements';
 		
-		$data['users'] = $this->User_model->get_users();
+		$data['users'] = $this->User_model->get_users($onlyActive);
 		$data["payments"] =array();
 		foreach ($data['users'] as $user) {
 			$userId = $user["id"];
