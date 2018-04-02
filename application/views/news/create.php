@@ -1,5 +1,5 @@
 <div class="holder_content">
-<h3>Créer une actualit&eacute;</h3>
+<h3>Cr&eacute;er une actualit&eacute;</h3>
 
 <form class='form' method='post' action='<?php echo site_url()?>/news/create'>
 <div>

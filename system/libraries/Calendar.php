@@ -192,8 +192,6 @@ class CI_Calendar {
 			} else {
 				$temp = str_replace('{week_day}', $day_name, $this->temp['week_day_cell']);
 				$temp = str_replace('{period_size}', sizeof($periods[$day_name]), $temp);
-				//$out .= str_replace('{week_day}', $day_name, $this->temp['week_day_cell']);
-				//period_size
 				$out .= $temp;
 			}
 		}
@@ -294,9 +292,9 @@ class CI_Calendar {
 				
 			//child row
 			$children = $data['users']['children'];
-			$resas = $data['resas'];
 			foreach ($children as $child) {
 				$childNum=$child['id'];
+				$resas = $data['resas'][$childNum];
 				$out .= "\n";
 				$out .= $this->temp['child_row_start'];
 				$out .= "\n";
@@ -314,6 +312,7 @@ class CI_Calendar {
 							$date=date("Y-m-d", $currentDate);
 							
 							$j=0;
+							$test ="";
 							foreach ($periods[$day_name] as $period) {
 								if (array_key_exists('holidays', $data) && in_array($currentDate, $data['holidays'])) {
 									$j++;
@@ -326,9 +325,12 @@ class CI_Calendar {
 									}
 								} else {
 									$resaType="period";
+//									$test .= "childNum".$childNum."date:".$date." periodId:".$period["periodId"]."<br>";
 									foreach($resas as $resa) {
-                                        if ($resa["child_id"]==$childNum && $resa["date"]==$date && $resa["period_id"]==$period["periodId"]) {
-											$resaType="period_".$resa["resa_type"];
+//									    $test .= "\tresa :".$resa["date"]." period:".$resa["period_id"]." resa_type:".$resa["resa_type"]." childNum:".$childNum."<br>";
+									    if ($resa["child_id"]==$childNum && $resa["date"]==$date && $resa["period_id"]==$period["periodId"]) {
+//                                            $test .= "\t\t==>found<br>";
+                                            $resaType="period_".$resa["resa_type"];
 											break;
 										} else {
 											$resaType="period";
@@ -368,7 +370,7 @@ class CI_Calendar {
 									$t4 = str_replace('{child}', $childNum, $t3);
 									$t5 = str_replace('{resa_type}', $resaType, $t4);
 									$t6 = str_replace('{resa_type_print}', $resaType_print, $t5);
-									$out .= str_replace('{period}', $period["id"], $t6);
+									$out .= str_replace('{period}', $period["periodId"], $t6);
 								}
 							}
 						} else {
@@ -388,8 +390,9 @@ class CI_Calendar {
 		$out .= $this->temp['table_close'];
 
 //		$out .= print_r($outtest);
-//		$out .= "test\n";
-//		$out .= print_r($outperiod);
+//		$clot = strtotime("29 March 2018") ;
+//		$out .= "test $clot";
+//		$out .= $test;
 		
 		return $out;
 	}

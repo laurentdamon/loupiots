@@ -155,9 +155,6 @@ class report extends CI_Controller {
         }
         $data["output"] .= "</tr>\n";
         
-        $data["resastest"] = array();
-        $resasDate[] = array();
-        $i = 0;
         foreach( $days as $daysName => $dateStr ) {
             $totalAM[$daysName] = $totalPM[$daysName] = 0;
             $date = date("Y-m-d", strtotime($dateStr));

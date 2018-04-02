@@ -38,7 +38,6 @@ class Resa_model extends CI_Model {
 	public function get_resa_where($where) {
 		$this->db->where($where);
 		$query = $this->db->get($this->resa_table);
-//print_r($where);		
 		return $query->result_array();
 	}
 	
