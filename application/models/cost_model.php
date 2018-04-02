@@ -10,7 +10,7 @@ class Cost_model extends CI_Model {
 	}
 		
 	function create($cost) {
-		$cost["id"] = "";
+//		$cost["id"] = "";
 		if(!$this->db->insert($this->cost_table, $cost)) { 
 			return FALSE;						
 		}

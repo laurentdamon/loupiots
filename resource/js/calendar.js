@@ -13,8 +13,6 @@ $(document).ready(function() {
 			dataType : "html",
 			cache : false,
 			success : function(result) {
-//alert("success "+getData);
-
 			$("#calendarContent").append(result);
 			}
 	});
@@ -25,6 +23,7 @@ $(document).ready(function() {
 				data : getData,
 				dataType : "html",
 				success : function(result) {
+//					alert("success load"+result);
 					var cost = jQuery.parseJSON(result);
 					for (var key in cost) {
 						if (key=="sum") {
@@ -62,6 +61,7 @@ $(document).ready(function() {
 		var text = $(this).text();
 		text = $.trim(text);
 		var data = text.split("-");
+//alert("click "+text);
 		var $defer = 
 			$.ajax({
 				url : createURL,
@@ -75,19 +75,17 @@ $(document).ready(function() {
 					child : data[4]
 				},
 				success : function(result) {
-//alert("success period "+result);
+//alert("success period"+result);
 					var resas = jQuery.parseJSON(result);
 					$.each(resas, function(property, value) {
 						var dateStr=value.date.split(" ");
 						dateStr=dateStr[0].split("-");
-				        var cellStr = dateStr[0]+"-"+dateStr[1]+"-"+dateStr[2].replace(/^0+/, '')+"-"+value.period_id+"-"+value.child_id;
+				        var cellStr = dateStr[0]+"-"+dateStr[1]+"-"+dateStr[2].replace(/^0+/, '')+"-"+value.period_id+"-"+value.child_id+"-";
 				        var cell = $("p.content:contains("+cellStr+")").parent();
 				        var type = value.resa_type;
 				        if (type==3) {
-					        //cell.css('background-color', '#A6233C');
 							cell.attr("class", "period_3");
 				        } else {
-					        //cell.css('background-color', '#ACF28A');
 							cell.attr("class", "period_1");
 				        }
 				    });
@@ -133,7 +131,8 @@ $(document).ready(function() {
 					})
 				},
 				error : function(result) {
-//					alert("failure period "+result);
+					str = JSON.stringify(result, null, 4); // (Optional) beautiful indented output.
+					alert("failure period "+str); // Displays output using window.alert()
 				}
 			});
 	});

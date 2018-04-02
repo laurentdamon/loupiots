@@ -19,18 +19,20 @@ class resa extends CI_Controller {
 	}
 
 	public function create($output=null) {
-		if (isset($_POST)) {
+	    if (isset($_POST)) {
 			$resaData=$this->Resa_model->setResaFromPostData($_POST);
 			if ($resaData) {
 				$output = $this->Resa_model->create($resaData);
-				$child = $this->Child_model->get_child_by_id($resaData["child_id"]);
-				/*$output["sql"] = */$this->Cost_model->persistCost($_POST["month"], $_POST["year"], $child["user_id"]);
+//				$child = $this->Child_model->get_child_by_id($resaData["child_id"]);
+				$this->Cost_model->persistCost($_POST["month"], $_POST["year"], $_POST["child"]);
 			} else {
 				$output=false;
 			}
 		} else {
 			$output=false;
 		}
+		$output["resaData"] = $resaData;
+		$output["POST"] = $_POST;
 		echo $this->my_json_encode(array_values($output));
 	}
 
@@ -96,7 +98,7 @@ class resa extends CI_Controller {
 						return '{' . implode(',', $output_associative) . '}';
 					}
 				default:
-					return ''; // Not supported
+					return '"not supported"'; // Not supported
 			}
 	}
 }

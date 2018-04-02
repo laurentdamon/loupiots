@@ -75,10 +75,10 @@ class Calendar_model extends CI_Model {
 			{child_row_end}</tr>{/child_row_end}
 			
 			{cal_period_cell}
-				<td class="{resa_type}">&nbsp;<p class="content">{year}-{month}-{day}-{period}-{child}</p></td>
+				<td class="{resa_type}">&nbsp;<p class="content">{year}-{month}-{day}-{period}-{child}-</p></td>
 			{/cal_period_cell}
 			{cal_mid_period_cell}
-				<td class="{resa_type} mid_day">&nbsp;<p class="content">{year}-{month}-{day}-{period}-{child}</p></td>
+				<td class="{resa_type} mid_day">&nbsp;<p class="content">{year}-{month}-{day}-{period}-{child}-</p></td>
 			{/cal_mid_period_cell}
 
 			{cal_period_cell_print}
@@ -89,10 +89,10 @@ class Calendar_model extends CI_Model {
 			{/cal_mid_period_cell_print}
 			
 			{cal_periodoff_cell}
-				<td class="{resa_type}">&nbsp;<p class="content">{year}-{month}-{day}-{period}-{child}</p></td>
+				<td class="{resa_type}">&nbsp;<p class="content">{year}-{month}-{day}-{period}-{child}-</p></td>
 			{/cal_periodoff_cell}
 			{cal_mid_periodoff_cell}
-				<td class="{resa_type} mid_day">&nbsp;<p class="content">{year}-{month}-{day}-{period}-{child}</p></td>
+				<td class="{resa_type} mid_day">&nbsp;<p class="content">{year}-{month}-{day}-{period}-{child}-</p></td>
 			{/cal_mid_periodoff_cell}
 			
 			{table_close}</table>{/table_close}
@@ -103,8 +103,11 @@ class Calendar_model extends CI_Model {
 		$cal_data = array();
 		
 		$cal_data['users'] = $this->User_model->get_users(TRUE, $id);
+		foreach ($cal_data['users']['children'] as $child) {
+		    $childId = $child['id'];
+		    $cal_data['resas'][$childId] = $this->Resa_model->get_resa_where(array('YEAR(date)' => $year, 'MONTH(date)' => $month, 'child_id' => $childId));
+		}
 		$cal_data['periods'] = $this->Days_model->get_daysPeriods();
-		$cal_data['resas']= $this->Resa_model->get_resa_where(array('YEAR(date)' => $year, 'MONTH(date)' => $month));
 		$holidays = $this->get_holidays_where(array('YEAR(date)' => $year, 'MONTH(date)' => $month));
 		foreach ($holidays as $currentHolidays) {
 			$cal_data['holidays'][] = strtotime($currentHolidays["date"]);
