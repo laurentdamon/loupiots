@@ -19,19 +19,24 @@
 <div class="holder_content">
 
 	<?php if ($loggedPrivilege >= 2) { 		?>
-		<h3>Gerer les factures </h3>
-	
+		<h3>G&eacute;rer les factures </h3>
+<?php
+//print_r($banks);
+////echo "<br>";
+//echo $sql;
+
+?>
 		<br>
 		<?php foreach ($users as $user) { //User row title 
-			echo "<h4>\n".$user["name"];
+		echo "<h4>\n".$user['user_name'];
 			echo "<a class='button' href='".site_url()."/report/paymentHistory/".$user['id']."/$year/$month'>Voir l'historique</a>";
 			echo "</h4>\n";
 			$userId = $user["id"];
-		?>
+?>
 			<table border=1>
 			<tr>
 				<td>Restant du<br>mois precedent</td>
-				<td>Depassemen<br>mois precedent</td>
+				<td>Depassement<br>mois precedent</td>
 				<td>Mois courant du</td>
 				<td>Montant total du</td>
 				<td>&nbsp;</td>
@@ -57,7 +62,7 @@
 				} else if ($curPayment['status']==4) {
 					$staus = "Annul&eacute;";
 				} else {
-					$staus = "En attente de r&eacute;ception";
+					$staus = "-";
 				}
 				echo "<tr>";
 				if ($row==0) {
@@ -67,10 +72,16 @@
    						<td rowspan=".sizeof($payments[$userId])."><b>".$costTotal[$userId]['sum']['total']."</b></td>		
    						<td rowspan=".sizeof($payments[$userId]).">&nbsp;</td>";
 				}
+				if ($curPayment['bank_id'] == "-") {
+				    $bank = "-";
+				} else {
+				    $bankId = $curPayment['bank_id'];
+				    $bank = $banks[$bankId];
+				}
 				echo "<td>".$curPayment['amount']."</td>
    						<td>".$curPayment['payment_date']."</td>
 						<td>".$curPayment["type"]."</td>
-						<td>".$curPayment['bank_id']."</td>
+						<td>".$bank."</td>
 						<td>".$curPayment["cheque_Num"]."</td>
    						<td>".$staus."</td>";
 				echo "<td>&nbsp;</td>";

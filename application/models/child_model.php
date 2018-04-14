@@ -104,44 +104,38 @@ class Child_model extends CI_Model
 		return $child;
 	}
 	
-	function get_fullChildren($onlyActiveChild = FALSE) {
+	function get_fullChildren($onlyActiveChild=FALSE) {
 	    $sqlActive = "";
-	    if ($onlyActiveChild === TRUE) {
+	    if ($onlyActiveChild == TRUE) {
 	        $sqlActive = " and c.is_active=1";
 	    }
-	    $sql = "SELECT *, c.id as child_id, c.name as child_name, u.name as user_name FROM child c, users u, class cl WHERE c.user_id=u.id and c.class_id=cl.id  $sqlActive";
+	    $sql = "SELECT c.id as child_id, c.name as child_name, c.is_active, c.birth, c.class_id, cl.class, 
+                        u.id as user_id, u.name as user_name, u.mail, u.modified, u.last_login, u.privilege 
+                FROM child c, users u, class cl WHERE c.user_id=u.id and c.class_id=cl.id $sqlActive order by user_name";
 	    $query = $this->db->query($sql);
-	    $data = array(); 
-	    $key = 0;
-	    foreach($query->result_array() AS $row) {
-	        $foundKey = array_search($row['user_id'], array_column($data, 'id'));
-	        if ($foundKey!=FALSE) {
-	            $child['id'] = $row['child_id'];
-	            $child['name'] = $row['child_name'];
-	            $child['is_active'] = $row['is_active'];
-	            $child['birth'] = $row['birth'];
-	            $child['is_active'] = $row['is_active'];
-	            $child['class']['id'] = $row['class_id'];
-	            $child['class']['class'] = $row['class'];
-	            $data[$foundKey]['children'][] = $child;
-	        } else {
-	            $data[$key]['id'] = $row['user_id'];
-	            $data[$key]['mail'] = $row['mail'];
-	            $data[$key]['modified'] = $row['modified'];
-	            $data[$key]['last_login'] = $row['last_login'];
-	            $data[$key]['user_name'] = $row['user_name'];
-	            $data[$key]['privilege'] = $row['privilege'];
-	            $data[$key]['children'][0]['id'] = $row['child_id'];
-	            $data[$key]['children'][0]['name'] = $row['child_name'];
-	            $data[$key]['children'][0]['is_active'] = $row['is_active'];
-	            $data[$key]['children'][0]['birth'] = $row['birth'];
-	            $data[$key]['children'][0]['is_active'] = $row['is_active'];
-	            $data[$key]['children'][0]['class']['id'] = $row['class_id'];
-	            $data[$key]['children'][0]['class']['class'] = $row['class'];
-	            $key ++;
-	        }
+	    $data = $query->result_array(); 
+	    $userChildren = array();
+	    foreach($data as $row) {
+	        $user_id = $row['user_id'];
+	        $child['id'] = $row['child_id'];
+	        $child['name'] = $row['child_name'];
+	        $child['is_active'] = $row['is_active'];
+	        $child['birth'] = $row['birth'];
+	        $child['class']['id'] = $row['class_id'];
+	        $child['class']['class'] = $row['class'];
+	        
+	        if ( ! isset($userChildren[$user_id]) ) {
+	            $userChildren[$user_id] = array();
+	            $userChildren[$user_id]['id'] = $row['user_id'];
+	            $userChildren[$user_id]['mail'] = $row['mail'];
+	            $userChildren[$user_id]['modified'] = $row['modified'];
+	            $userChildren[$user_id]['last_login'] = $row['last_login'];
+	            $userChildren[$user_id]['user_name'] = $row['user_name'];
+	            $userChildren[$user_id]['privilege'] = $row['privilege'];
+	        } 
+	        $userChildren[$user_id]['children'][] = $child;
 	    }
-	    return $data;
+	    return $userChildren;
 	}
 	
 }

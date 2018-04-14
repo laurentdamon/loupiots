@@ -152,7 +152,8 @@ class Resa_model extends CI_Model {
 
 	public function get_cost($resas) {
 		$costNum=array();
-		foreach ($resas as $resaId => $resa) {
+		foreach ($resas as $resa) {
+		    $resaId = $resa['id'];
 			if (isset($resa['price'])) {
 				$periodPrice = $resa['price'];
 			} else {

@@ -110,7 +110,7 @@ class report extends CI_Controller {
         
         //initialisation
         $weekCall = $this->input->post('weekCall');
-        $onlyActive = $this->input->get_post('onlyActive');
+        $onlyActive = $this->input->post('onlyActive');
         if ($weekCall=="") {
             $onlyActive = TRUE;
             $weekCall = date("d-m-Y");
@@ -120,8 +120,8 @@ class report extends CI_Controller {
         $data["startDate"]=current($days);
         
         $periods = $this->Days_model->get_daysPeriods();
-        $users = $this->Child_model->get_fullChildren(TRUE);
-        
+        $users = $this->Child_model->get_fullChildren($onlyActive);
+        $data["users"] = $users;
         $numCol=1;
         
         $data["output"] = "<table border='1px' width='100%'>\n";
@@ -169,9 +169,10 @@ class report extends CI_Controller {
         
         //Table body
         foreach ($users as $user) {
+            $userName = isset($user['user_name']) ? $user['user_name'] : NULL;
             //User row title
             $data["output"] .= "<tr>\n";
-            $data["output"] .= "<td bgcolor='#bbb' colspan='$numCol'>&nbsp;&nbsp;&nbsp;".$user["user_name"]."</td>\n";
+            $data["output"] .= "<td bgcolor='#bbb' colspan='$numCol'>&nbsp;&nbsp;&nbsp;".$userName."</td>\n";
             $data["output"] .= "</tr>\n";
             //Child row
             if (array_key_exists('children', $user)) {

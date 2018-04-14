@@ -4,7 +4,6 @@
 
 <div class="holder_content">
 	<h3>Recapitulatif hebdomadaire</h3>
-	
 	<form class="form" method="post" action="<?php echo site_url()?>/report/weeklySummary">
 	<div>
 		<label for="weekCall">Date:</label> 
@@ -19,7 +18,7 @@
 </div>
 
 <div class="holder_content" id="recapPrint">
-	
+
 	<h3>Semaine du <?php echo $startDate; ?> au <?php echo $endDate; ?> </h3>
 	<div id="classroomCall">
 		<?php echo $output; ?>	

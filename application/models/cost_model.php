@@ -69,8 +69,6 @@ class Cost_model extends CI_Model {
 		} else {
 			$this->create($cost);
 		}
-//$return = $this->db->last_query();
-//$return = $costCurrent;
 		
 		//Update cost next month if exists
 		$nextMonth=$month+1;
@@ -83,36 +81,56 @@ class Cost_model extends CI_Model {
 		if($DBNextCost) {
 			$this->persistCost($nextMonth, $nextYear, $userId);
 		}
-//return $return;
 	}
 	
-	function getCost($year, $month, $userId) {
+	function getCost($year, $month, $userId, $children=NULL) {
 		$cost['sum']['cost'] = 0;
 		$cost['sum']['depassement'] = 0;
 		$cost['sum']['depassementPrev'] = 0;
 		$cost['sum']['costPrev'] = 0;
 		
 		$prevDate = strtotime( $year."-".($month-1)."-01" );
-		$prevMonth = date("m", $prevDate);
+		$prevMonth = date("n", $prevDate);
 		$prevYear = date("Y", $prevDate);
 		
-		$children = $this->db->get_where('child', array('user_id' => $userId))->result_array();
+		$cost['children'] = array();
+		
+		if (!isset($children)) {
+		    $children = $this->db->get_where('child', array('user_id' => $userId))->result_array();
+		}
 		foreach ($children as $child) {
 			$childNum=$child['id'];
-			//cout des resas du mois courant
-			$resas[$childNum]= $this->Resa_model->get_full_resa_where(array('child_id' => $childNum, 'YEAR(date)' => $year, 'MONTH(date)' => $month, 'resa_type !=' => 3 ));
-			$cost['children'][$childNum]['resa'] = $this->Resa_model->get_cost($resas[$childNum]);
-			//cout des depassemants du mois courant
-			$depassement[$childNum]= $this->Resa_model->get_full_resa_where(array('child_id' => $childNum, 'YEAR(date)' => $year, 'MONTH(date)' => $month, 'resa_type' => 3 ));
-			$cost['children'][$childNum]['depassement'] =$this->Resa_model->get_cost($depassement[$childNum]);
-			
-			//cout des depassemants du mois precedant
-			$depassementPrev[$childNum]= $this->Resa_model->get_full_resa_where(array('child_id' => $childNum, 'YEAR(date)' => $prevYear, 'MONTH(date)' => $prevMonth, 'resa_type' => 3 ));
-			$cost['children'][$childNum]['depassementPrev'] = $this->Resa_model->get_cost($depassementPrev[$childNum]);
-			//cout des resas du mois precedent
-			$resasPrev[$childNum]= $this->Resa_model->get_full_resa_where(array('child_id' => $childNum, 'YEAR(date)' => $prevYear, 'MONTH(date)' => $prevMonth, 'resa_type !=' => 3 ));
-			$cost['children'][$childNum]['resaPrev'] = $this->Resa_model->get_cost($resas[$childNum]);
-	
+			$allResas = $this->Resa_model->get_full_resa_where(array('child_id' => $childNum, 'YEAR(date)' => $year ));
+			$allResasDep = array();
+			$allResasResa = array();
+			$allResasDepPrev = array();
+			$allResasResaPrev = array();
+			foreach ($allResas as $allResa) {
+			    $curDate = $allResa["date"];
+			    $resa_type = $allResa["resa_type"];
+			    $resaMonth = date("n", strtotime($curDate));
+			    $resaYear = date("Y", strtotime($curDate));
+			    
+			    if ($resaMonth == $month) {
+			        if ($resa_type == 3) {
+			            $allResasDep[] = $allResa;
+			        } else {
+			            $allResasResa[] = $allResa;
+			        }
+			    }
+			    if ($resaMonth == $prevMonth && $resaYear == $prevYear) {
+			        if ($resa_type == 3) {
+			            $allResasDepPrev[] = $allResa;
+			        } else {
+			            $allResasResaPrev[] = $allResa;
+			        }
+			    }
+			}
+			$cost['children'][$childNum]['depassement'] = $this->Resa_model->get_cost($allResasDep);
+			$cost['children'][$childNum]['resa'] = $this->Resa_model->get_cost($allResasResa);
+			$cost['children'][$childNum]['depassementPrev'] = $this->Resa_model->get_cost($allResasDepPrev);
+			$cost['children'][$childNum]['resaPrev'] = $this->Resa_model->get_cost($allResasResaPrev);
+
 			$cost['children'][$childNum]['total'] = $cost['children'][$childNum]['resa']["total"] + $cost['children'][$childNum]['depassementPrev']["total"];
 	
 			$cost['sum']['cost'] += $cost['children'][$childNum]['resa']["total"];
@@ -122,13 +140,17 @@ class Cost_model extends CI_Model {
 		}
  		
  		//Get validated month payment
-		$payment = $this->Payment_model->get_total_payment_where(array('user_id' => $userId, 'YEAR(month_paided)' => $year, 'MONTH(month_paided)' => $month, 'status' => "3" ));
-		if (isset($payment['amount'])) {
-			$cost['paid'] = $payment['amount'];
-		} else {
-			$cost['paid'] = 0;
-		}	
-				
+		$where = array('user_id'=>$userId, 'YEAR(month_paided)' => $year, 'MONTH(month_paided)' => $month);
+		$payments = $this->Payment_model->get_payment_where($where);
+		$cost["payments"] = $payments;
+		
+		$cost['paid'] = 0;
+		foreach ($payments as $curPayment) {
+		    if (isset($curPayment['amount'])) {
+		        $cost['paid'] += $curPayment['amount'];
+		    }
+		}
+
 		$lastMonthCost = current($this->Cost_model->get_cost_where(array('user_id' => $userId, 'YEAR(month_paided)' => $prevYear, 'MONTH(month_paided)' => $prevMonth )));
  		if (isset($lastMonthCost["debt"])) {
  			$cost['debtPrev'] = $lastMonthCost["debt"];

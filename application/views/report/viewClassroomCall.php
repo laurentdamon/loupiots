@@ -26,7 +26,6 @@
 </div>
 
 <div class="holder_content" id="classCallPrintAM">
-	
 	<h3>Semaine du <?php echo $startDate; ?> au <?php echo $endDate; ?> (Matin) </h3>
 	<a class="button" href="javascript:printDiv('classCallPrintAM')">Imprimer</a>
 	<div id="classroomCall"></div>

@@ -8,6 +8,7 @@ class payment extends CI_Controller {
 		$this->load->model('Payment_model');
 		$this->load->model('Bank_model');
 		$this->load->model('Cost_model');
+		$this->load->model('Child_model');
 		$this->load->helper('url');
 		$this->load->helper('dob'); 
 		$this->load->helper('form');
@@ -174,7 +175,7 @@ class payment extends CI_Controller {
 	}
 	
 	public function report() {
-		//$this->output->enable_profiler(TRUE);
+//		$this->output->enable_profiler(TRUE);
 		
 		//check access rights
 		$data['loggedId'] = $this->session->userdata('id');
@@ -200,14 +201,16 @@ class payment extends CI_Controller {
 		$data['onlyActive'] = $onlyActive;
 		
 		$data['title'] = 'Liste des paiements';
+
+		$data['users'] = $this->Child_model->get_fullChildren($onlyActive);
 		
-		$data['users'] = $this->User_model->get_users($onlyActive);
-		$data["payments"] =array();
-		foreach ($data['users'] as $user) {
-			$userId = $user["id"];
-			$where = array('user_id'=>$userId, 'YEAR(month_paided)' => $year, 'MONTH(month_paided)' => $month);
-			$data["payments"][$userId] = $this->Payment_model->get_payment_where($where);
-			$data['costTotal'][$userId] = $this->Cost_model->getCost($year, $month, $userId);
+		$data["payments"] = array();
+		$data['banks'] = $this->banks;
+		
+		foreach ($data['users'] as $userId => $user) {
+		    $data['costTotal'][$userId] = $this->Cost_model->getCost($year, $month, $userId, $data['users'][$userId]['children']);
+		    $data["payments"][$userId] = $data['costTotal'][$userId]["payments"];
+			
 			if (sizeof($data["payments"][$userId])==0) {
 				$data["payments"][$userId][0]["status"]="-";
 				$data["payments"][$userId][0]["amount"]="-";
