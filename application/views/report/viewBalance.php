@@ -18,6 +18,12 @@
 <div class="holder_content_separator"></div>
 
 <div class="holder_content">
+<?php
+//print_r($periodPrices);
+//echo "<br>";
+//echo $sql;
+
+?>
 
 	<?php if ($loggedPrivilege == 3) { 		?>
 		<h3>Balance comptable <?php echo callback_month($month)." ".$year ?></h3>

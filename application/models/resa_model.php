@@ -152,14 +152,17 @@ class Resa_model extends CI_Model {
 
 	public function get_cost($resas) {
 		$costNum=array();
+		$periodPrices = $this->Period_model->getPeriodPrices();
+		$cost["periodPrices"]=$periodPrices;
 		foreach ($resas as $resa) {
 		    $resaId = $resa['id'];
 			if (isset($resa['price'])) {
 				$periodPrice = $resa['price'];
 			} else {
 				$periodId = $resa["period_id"];
-				$curPeriod = $this->Period_model->get_periods($periodId);
-				$periodPrice = $curPeriod['price'];
+//				$curPeriod = $this->Period_model->get_periods($periodId);
+//				$periodPrice = $curPeriod["price"];
+				$periodPrice = $periodPrices[$periodId];
 			}
 			if ($resa["resa_type"]==3 && $resa["date"] > LOUP_DEPASSEMENT_INITIAL_DATE) {
 				$periodPrice = LOUP_DEPASSEMENT_PRICE;

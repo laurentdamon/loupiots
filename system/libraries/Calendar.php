@@ -187,7 +187,7 @@ class CI_Calendar {
 		$day_names = $this->get_day_names();
 		for ($i = 0; $i < 7; $i ++) {
 			$day_name = $day_names[($start_day + $i) %7];
-			if ($day_name=='Samedi' || $day_name=='Dimanche') {
+			if ($day_name=='Samedi' || $day_name=='Dimanche' || $day_name=='Mercredi') {
 				$out .= str_replace('{week_day}', $day_name, $this->temp['week_dayoff_cell']);
 			} else {
 				$temp = str_replace('{week_day}', $day_name, $this->temp['week_day_cell']);
@@ -212,7 +212,7 @@ class CI_Calendar {
 
 		for ($i = 0; $i < 7; $i ++) {
 			$day_name = $day_names[($start_day + $i) %7];
-			if ($day_name=='Samedi' || $day_name=='Dimanche') {
+			if ($day_name=='Samedi' || $day_name=='Dimanche' || $day_name=='Mercredi') {
 				$out .= "<td id ='period_mid_day'>&nbsp;</td>";
 			} else {
 				$j=0;
@@ -256,7 +256,7 @@ class CI_Calendar {
 				//Determine if holidays
 				$currentDate = mktime(0, 0, 0, $month, $day, $year);
 				
-				if ($day_name=='Samedi' || $day_name=='Dimanche') {
+				if ($day_name=='Samedi' || $day_name=='Dimanche' || $day_name=='Mercredi') {
 					$out .= ($is_current_month == TRUE AND $day == $cur_day) ? $this->temp['cal_celloff_start_today'] : $this->temp['cal_celloff_start'];
 				} elseif (array_key_exists('holidays', $data) && in_array($currentDate, $data['holidays'])) {
 					//$out .= ($is_current_month == TRUE AND $day == $cur_day) ? $this->temp['cal_cellhol_start_today'] : $this->temp['cal_cellhol_start'];
@@ -304,7 +304,7 @@ class CI_Calendar {
 				for ($i = 0; $i < 7; $i++) {
 					$currentDay=$rowDay[$i];
 					$day_name = $day_names[($start_day + $i) %7];
-					if ($day_name=='Samedi' || $day_name=='Dimanche') {
+					if ($day_name=='Samedi' || $day_name=='Dimanche' || $day_name=='Mercredi') {
 						$out .= "<td class='mid_periodoff'>&nbsp;</td>";
 					} else {
 						if ($currentDay > 0 AND $currentDay <= $total_days) {

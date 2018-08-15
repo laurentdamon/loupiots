@@ -158,7 +158,7 @@ class Calendar_model extends CI_Model {
 		$date = strtotime($date);
 		$days["Lundi"] = date('d-m-Y', strtotime('monday this week', $date));
 		$days["Mardi"] = date('d-m-Y', strtotime('tuesday this week', $date));
-		$days["Mercredi"] = date('d-m-Y', strtotime('wednesday this week', $date));
+//		$days["Mercredi"] = date('d-m-Y', strtotime('wednesday this week', $date));
 		$days["Jeudi"] = date('d-m-Y', strtotime('thursday this week', $date));
 		$days["Vendredi"] = date('d-m-Y', strtotime('friday this week', $date));
 		return $days;

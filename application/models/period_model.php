@@ -26,8 +26,8 @@ class Period_model extends CI_Model {
 
 	public function get_periods($id = FALSE) {
 		if ($id === FALSE) {
-			$query = $this->db->get($this->period_table);
-			$query->order_by("start_time", "asc"); 
+		    $this->db->order_by("start_time", "asc");
+		    $query = $this->db->get($this->period_table);
 			return $query->result_array();
 		}
 		$query = $this->db->get_where($this->period_table, array('id' => $id));
@@ -51,7 +51,7 @@ class Period_model extends CI_Model {
 	}
 
 	function getPeriodPrices() {
-		$periods = get_periods();
+	    $periods = $this->get_periods();
 		$prices = array();
 		foreach ($periods as $period ) {
 			if (!in_array($period['price'], $prices)) {
