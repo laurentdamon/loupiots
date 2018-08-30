@@ -15,7 +15,7 @@ $nextCloseDate=date(strtotime('next thursday', $lastCloseDate));
 //echo "Prochaine fermeture prevue : ". date('l d M Y H:i:s', $nextCloseDate) ." ". $nextCloseDate ."</br>";
 
 $now=date(time());
-//echo "Now:       ". date('l d M Y H:i:s') ." ".date(time())." ".$now."</br>";
+echo "Now:       ". date('l d M Y H:i:s') ." ".date(time())." ".$now."</br>";
 
 //echo "<br>des que qq'un se connecte apres le ".date('l d M Y H:i:s', $nextCloseDate)."<br>";
 if ($now > $nextCloseDate) {
@@ -28,6 +28,15 @@ if ($now > $nextCloseDate) {
 //	echo "Nouvelle fermeture prevue : ". date('l d M Y H:i:s', $nextCloseDate) ." ". $nextCloseDate ."</br>";
 	touch($lastCloseFileName);
 	file_put_contents($lastCloseFileName, $closeDate);
+	
+	//sauvegarder le cout
+	
+	//si nouveau mois verouiller le debit
+	//si ligne cost du mois est vide => c'est un nouveau mois.
+	//current month
+	
+	//last month paid 
+	//if last cost.month/yearpaid < current month/year
 }
 
 ?>

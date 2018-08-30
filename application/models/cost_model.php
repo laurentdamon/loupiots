@@ -54,6 +54,10 @@ class Cost_model extends CI_Model {
 		$userId = $payment['user_id'];
 
 		$this->persistCost($month, $year, $userId);
+		/* if payment is validated then 
+		 * 		cost_N['paid']=cost_N['paid']+payment_N['amount'] 
+		 * 		cost_N+1['debt']=geteCost_N - cost_N['paid']
+		 */
 	}
 	
 	function persistCost($month, $year, $userId) {

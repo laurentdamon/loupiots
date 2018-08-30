@@ -50,6 +50,7 @@ class calendar extends CI_Controller {
 	}
 
 	//obsolete not used since week reservation
+	/*
 	public function validateResa() {
 		$this->output->enable_profiler(TRUE);
 		
@@ -96,6 +97,7 @@ class calendar extends CI_Controller {
 		$this->load->view('admin/viewCalendarSetting', $data);
 		$this->load->view('templates/footer');		
 	}
+	*/
 	
 	public function createHolidays() {
 		$data['title'] = 'Gerer le calendrier';

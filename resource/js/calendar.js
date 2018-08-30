@@ -13,7 +13,6 @@ $(document).ready(function() {
 			dataType : "html",
 			cache : false,
 			success : function(result) {
-//alert("success "+result);
 
 			$("#calendarContent").append(result);
 			}
@@ -58,10 +57,13 @@ $(document).ready(function() {
 				}
 			})
 	);
+	
 	$(".period").live("click", function() {
 		var text = $(this).text();
 		text = $.trim(text);
 		var data = text.split("-");
+
+alert("period "+data);
 		var $defer = 
 			$.ajax({
 				url : createURL,
@@ -75,7 +77,6 @@ $(document).ready(function() {
 					child : data[4]
 				},
 				success : function(result) {
-//alert("success period "+result);
 					var resas = jQuery.parseJSON(result);
 					$.each(resas, function(property, value) {
 						var dateStr=value.date.split(" ");
@@ -143,6 +144,7 @@ $(document).ready(function() {
 		text = $.trim(text);
 		var data = text.split("-");
 		var aObj = $(this);
+alert("period1 "+aObj);
 		var $defer = 
 			$.ajax({
 				url : deleteURL,
