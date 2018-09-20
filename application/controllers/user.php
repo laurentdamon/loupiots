@@ -103,7 +103,7 @@ class user extends CI_Controller {
 	
 	public function viewUser($id = null, $year = null, $month = null) {
 		//$this->output->enable_profiler(TRUE);
-		
+			
 		if (!isset($id) || ($this->session->userdata('id')!=$id && $this->session->userdata('privilege')<2)) {
 			show_404();
 		}
@@ -123,13 +123,20 @@ class user extends CI_Controller {
 			if ($month=="" || $year=="") {
 				$nextMonth = mktime(0, 0, 0, date("m")+1, date("d"), date("Y"));
 				$year=date("Y", $nextMonth);
-				$month=date("m", $nextMonth);
+				$month=date("n", $nextMonth);
 			}
 		}
+		setlocale(LC_ALL, 'fr_FR','fra');
+		$curMonth = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
+		$data['getData']['curMonthYear']=date("n", $curMonth).date("Y", $curMonth);
+		$data['getData']['viewMonthYear']=$month.$year;
 
 		$data['title'] = $data['user']['name'];
 		$data['getData']['year']=$year;
 		$data['getData']['month']=$month;
+		$data['getData']['monthStr']=strftime("%B", mktime(0, 0, 0, $month, 10, $year));
+		$data['getData']['month-1Str']=strftime("%B", mktime(0, 0, 0, $month-1, 10, $year));
+		$data['getData']['month-2Str']=strftime("%B", mktime(0, 0, 0, $month-2, 10, $year));
 		$data['getData']['user_id']=$data['userId'];
 		
 		$data['usersOption'] = $this->User_model->get_option_users();

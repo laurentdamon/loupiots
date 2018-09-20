@@ -20,12 +20,6 @@
 
 	<?php if ($loggedPrivilege >= 2) { 		?>
 		<h3>G&eacute;rer les factures </h3>
-<?php
-//print_r($banks);
-////echo "<br>";
-//echo $sql;
-
-?>
 		<br>
 		<?php foreach ($users as $user) { //User row title 
 		echo "<h4>\n".$user['user_name'];
@@ -36,7 +30,7 @@
 			<table border=1>
 			<tr>
 				<td>Restant du<br>mois precedent</td>
-				<td>Depassement<br>mois precedent</td>
+				<td>D&eacute;passement<br>mois precedent</td>
 				<td>Mois courant du</td>
 				<td>Montant total du</td>
 				<td>&nbsp;</td>

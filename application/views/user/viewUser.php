@@ -68,16 +68,49 @@
 
 <div class="holder_content">
 <section class="container_left">
-	<h3>Facture</h3>
+	<h3>Encours <?php echo $getData['monthStr'] ?></h3>
 	<table border=1>
 			<tr>
 				<td>&nbsp;</td>
-				<td>Mois precedent<br>Restant du</td>
-				<td>Mois precedent<br>Depassement</td>
-				<td>Mois courant</td>
-				<td><b>Total</b></td>
-				<td>&nbsp;</td>
+				<td>Reservation</td>
 				<td>Depassement</td>
+				<td><b>Total</b></td>
+			</tr>
+			<?php
+			if (isset($user['children'])) {
+				foreach ($user['children'] as $child) {
+					$childNum=$child['id'];
+					echo "
+						<tr>
+							<td>".$child['name']."</td>
+							<td><div class='".$childNum."-cost'></div></td>
+							<td><div class='".$childNum."-costDepassement'></div></td>
+							<td><b><div class='".$childNum."-total'></div></b></td>
+						</tr>";
+				}
+			}
+			?>
+				<tr>
+					<td>Total</td>
+					<td><div class='cost'></div></td>
+					<td><div class='totalDepassement'></div></td>
+					<td><b><div class='total'></div></b></td>
+				</tr>
+		</table>
+
+</section>
+</div>
+
+<div class="holder_content">
+<section class="container_left">
+	<h3>Facture <?php echo $getData['month-1Str'] ?></h3>
+	<table border=1>
+			<tr>
+				<td>&nbsp;</td>
+				<td>Restant du <?php echo $getData['month-2Str'] ?></td>
+				<td>Depassement <?php echo $getData['month-2Str'] ?></td>
+				<td>Reservation <?php echo $getData['month-1Str'] ?></td>
+				<td><b>Total</b></td>
 			</tr>
 			<?php
 			if (isset($user['children'])) {
@@ -90,8 +123,6 @@
 							<td><div class='".$childNum."-costDepassementPrev'></div></td>
 							<td><div class='".$childNum."-cost'></div></td>
 							<td><b><div class='".$childNum."-total'></div></b></td>
-							<td>&nbsp;</td>
-							<td><div class='".$childNum."-costDepassement'></div></td>
 						</tr>";
 				}
 			}
@@ -102,8 +133,6 @@
 					<td><div class='totalDepassementPrev'></div></td>
 					<td><div class='cost'></div></td>
 					<td><b><div class='total'></div></b></td>
-					<td>&nbsp;</td>
-					<td><div class='totalDepassement'></div></td>
 				</tr>
 		</table>
 
@@ -111,7 +140,12 @@
 
 <section class="container_rigth">
 	<h3>Reglement</h3>
-	<a class="button" href="<?php echo site_url()?>/payment/create/<?php echo $user['id']?>">Ajouter paiement</a>
+	<?php 
+		echo $getData['curMonthYear']." versus ".$getData['viewMonthYear'];
+		if ($getData['curMonthYear'] == $getData['viewMonthYear']) {
+			echo '<a class="button" href="'.site_url().'/payment/create/'.$user['id'].'">Ajouter paiement</a>';
+		}
+	?>
 	<a class="button" href="<?php echo site_url()?>/report/paymentHistory/<?php echo $user['id']."/".$getData['year']."/".$getData['month']?>">Voir l'historique</a>
 	
 	<table border=1>

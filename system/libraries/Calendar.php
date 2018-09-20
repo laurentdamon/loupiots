@@ -312,7 +312,6 @@ class CI_Calendar {
 							$date=date("Y-m-d", $currentDate);
 							
 							$j=0;
-							$test ="";
 							foreach ($periods[$day_name] as $period) {
 								if (array_key_exists('holidays', $data) && in_array($currentDate, $data['holidays'])) {
 									$j++;
@@ -325,11 +324,8 @@ class CI_Calendar {
 									}
 								} else {
 									$resaType="period";
-//									$test .= "childNum".$childNum."date:".$date." periodId:".$period["periodId"]."<br>";
 									foreach($resas as $resa) {
-//									    $test .= "\tresa :".$resa["date"]." period:".$resa["period_id"]." resa_type:".$resa["resa_type"]." childNum:".$childNum."<br>";
-									    if ($resa["child_id"]==$childNum && $resa["date"]==$date && $resa["period_id"]==$period["periodId"]) {
-//                                            $test .= "\t\t==>found<br>";
+										if ($resa["child_id"]==$childNum && $resa["date"]==$date && $resa["period_id"]==$period["id"]) {
                                             $resaType="period_".$resa["resa_type"];
 											break;
 										} else {
