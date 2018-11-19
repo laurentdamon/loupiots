@@ -160,8 +160,6 @@ class Resa_model extends CI_Model {
 				$periodPrice = $resa['price'];
 			} else {
 				$periodId = $resa["period_id"];
-//				$curPeriod = $this->Period_model->get_periods($periodId);
-//				$periodPrice = $curPeriod["price"];
 				$periodPrice = $periodPrices[$periodId];
 			}
 			if ($resa["resa_type"]==3 && $resa["date"] > LOUP_DEPASSEMENT_INITIAL_DATE) {

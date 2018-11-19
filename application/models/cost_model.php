@@ -100,7 +100,7 @@ class Cost_model extends CI_Model {
 		$prevMonth = date("m", $prevDate);
 		$prevYear = date("Y", $prevDate);
 		
-		    $children = $this->db->get_where('child', array('user_id' => $userId))->result_array();
+		$children = $this->db->get_where('child', array('user_id' => $userId))->result_array();
 		foreach ($children as $child) {
 			$childNum=$child['id'];
 			//cout des resas du mois courant
@@ -148,6 +148,5 @@ class Cost_model extends CI_Model {
 		return $cost;
 	}
 	
-		
 }
 ?>

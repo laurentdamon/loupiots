@@ -61,13 +61,14 @@
 </section>
 
 <section class="holder_content">
-	<div id=calendarContent></div>
+	<div id=calendarContent></div>	
 </section>
 </div>
 <?php } ?>
 
 <div class="holder_content">
 <section class="container_left">
+
 	<h3>Encours <?php echo $getData['monthStr'] ?></h3>
 	<table border=1>
 			<tr>
@@ -101,6 +102,10 @@
 </section>
 </div>
 
+<?php 
+	if ($getData['curMonthYear'] >= $getData['viewMonthYear']) {
+?>
+
 <div class="holder_content">
 <section class="container_left">
 	<h3>Facture <?php echo $getData['month-1Str'] ?></h3>
@@ -119,7 +124,7 @@
 					echo "
 						<tr>
 							<td>".$child['name']."</td>
-							<td><div class='".$childNum."-debt'></div></td>
+							<td>&nbsp;</td>
 							<td><div class='".$childNum."-costDepassementPrev'></div></td>
 							<td><div class='".$childNum."-cost'></div></td>
 							<td><b><div class='".$childNum."-total'></div></b></td>
@@ -141,7 +146,6 @@
 <section class="container_rigth">
 	<h3>Reglement</h3>
 	<?php 
-		echo $getData['curMonthYear']." versus ".$getData['viewMonthYear'];
 		if ($getData['curMonthYear'] == $getData['viewMonthYear']) {
 			echo '<a class="button" href="'.site_url().'/payment/create/'.$user['id'].'">Ajouter paiement</a>';
 		}
@@ -184,6 +188,10 @@
 		
 	
 </section>
+<?php 
+	}
+?>
+
 </div>
 
 <div class="holder_content_separator"></div>

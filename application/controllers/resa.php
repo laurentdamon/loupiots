@@ -53,7 +53,7 @@ class resa extends CI_Controller {
 		echo $this->my_json_encode($output_string);
 	}
 
-	public function get() {
+	public function getCalendar() {
 //		$this->output->enable_profiler(TRUE);
 		
 		$this->Calendar_model->init($_REQUEST['user_id']);
@@ -66,6 +66,48 @@ class resa extends CI_Controller {
 		echo $calData;
 	}
 
+	public function getCost() {
+		$userId = $_GET['user_id'];
+		$year = $_GET['year'];
+		$month = $_GET['month'];
+		$cost['sum']['resa'] = 0;
+		$cost['sum']['depassement'] = 0;
+		$cost['sum']['total'] = 0;
+		
+		$children = $this->db->get_where('child', array('user_id' => $userId, 'is_active' => true))->result_array();
+		foreach ($children as $child) {
+			$childNum=$child['id'];
+			//cout des resas du mois courant
+			$resas[$childNum]= $this->Resa_model->get_full_resa_where(array('child_id' => $childNum, 'YEAR(date)' => $year, 'MONTH(date)' => $month, 'resa_type !=' => 3 ));
+			
+			if (sizeof($resas[$childNum])>0) {
+				$price = $resas[$childNum][0]['price'];
+				$totalResa = sizeof($resas[$childNum])*$price;
+				$cost['children'][$childNum]['resaStr'] = sizeof($resas[$childNum])." x ".$price." = ".$totalResa;
+			} else {
+				$totalResa = 0;
+				$cost['children'][$childNum]['resaStr'] = "0";
+			}
+			//cout des depassemants du mois courant
+			$depassement[$childNum]= $this->Resa_model->get_full_resa_where(array('child_id' => $childNum, 'YEAR(date)' => $year, 'MONTH(date)' => $month, 'resa_type =' => 3 ));
+			if (sizeof($depassement[$childNum])>0) {
+				$price = $depassement[$childNum][0]['price'];
+				$totalDepas = sizeof($depassement[$childNum])*$price;
+				$cost['children'][$childNum]['depassementStr'] = sizeof($depassement[$childNum])." x ".$price." = ".$totalDepas;
+			} else {
+				$totalDepas = 0;
+				$cost['children'][$childNum]['depassementStr'] = "0";
+			}
+			
+			$cost['children'][$childNum]['total'] = $totalResa + $totalDepas;
+			
+			$cost['sum']['resa'] += $totalResa;
+			$cost['sum']['depassement'] += $totalDepas;
+		}
+		$cost['sum']['total'] = $cost['sum']['resa'] + $cost['sum']['depassement'];
+		echo $this->my_json_encode($cost);
+	}
+
 	// TODO check version of php
 	public function my_json_encode($data) {
 			switch ($type = gettype($data)) {
@@ -74,9 +116,10 @@ class resa extends CI_Controller {
 				case 'boolean':
 					return ($data ? 'true' : 'false');
 				case 'integer':
+					return '"' . addslashes($data) . '"';
 				case 'double':
 				case 'float':
-					return $data;
+					return '"' . addslashes($data) . '"';
 				case 'string':
 					return '"' . addslashes($data) . '"';
 				case 'object':

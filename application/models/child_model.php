@@ -104,6 +104,31 @@ class Child_model extends CI_Model
 		return $child;
 	}
 	
+	function get_children_by_user($userId, $onlyActiveChild=FALSE) {
+	    $sqlActive = "";
+	    if ($onlyActiveChild == TRUE) {
+	        $sqlActive = " and c.is_active=1";
+	    }
+	    $sql = "SELECT c.id as child_id, c.name as child_name, c.is_active, c.birth, 
+                        u.id as user_id, u.name as user_name 
+                FROM child c, users u WHERE c.user_id=u.id and u.id=$userId $sqlActive order by child_name";
+	    $query = $this->db->query($sql);
+	    $data = $query->result_array(); 
+	    $userChildren = array();
+	    foreach($data as $row) {
+	        $child['id'] = $row['child_id'];
+	        $child['name'] = $row['child_name'];
+	        $child['is_active'] = $row['is_active'];
+	        $child['birth'] = $row['birth'];
+	        $child['user_id'] = $row['user_id'];
+	        $child['user_name'] = $row['user_name'];
+	        
+	    	$child_id = $row['child_id'];
+	        $userChildren[$child_id] = $child;
+	    }
+	    return $userChildren;
+	}
+	
 	function get_fullChildren($onlyActiveChild=FALSE) {
 	    $sqlActive = "";
 	    if ($onlyActiveChild == TRUE) {

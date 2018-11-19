@@ -8,7 +8,7 @@ class Calendar_model extends CI_Model {
 	}
 	
 	function init($userId) {
-		$periods = $this->Days_model->get_daysPeriods();
+//		$periods = $this->Days_model->get_daysPeriods();
 		
 		$this->conf = array(
 			'day_type' => 'long',
@@ -102,8 +102,8 @@ class Calendar_model extends CI_Model {
 	function get_calendar_data($id, $year, $month) {
 		$cal_data = array();
 		
-		$cal_data['users'] = $this->User_model->get_users(TRUE, $id);
-		foreach ($cal_data['users']['children'] as $child) {
+		$cal_data['children'] = $this->Child_model->get_children_by_user($id, TRUE);
+		foreach ($cal_data['children'] as $child) {
 		    $childId = $child['id'];
 		    $cal_data['resas'][$childId] = $this->Resa_model->get_resa_where(array('YEAR(date)' => $year, 'MONTH(date)' => $month, 'child_id' => $childId));
 		}

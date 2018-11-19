@@ -16,7 +16,7 @@ class calendar extends CI_Controller {
 	}
 
 	function index() {
-		$this->output->enable_profiler(TRUE);
+//		$this->output->enable_profiler(TRUE);
 		
 		$this->load->library('form_validation');
 		
@@ -49,55 +49,6 @@ class calendar extends CI_Controller {
 		
 	}
 
-	//obsolete not used since week reservation
-	/*
-	public function validateResa() {
-		$this->output->enable_profiler(TRUE);
-		
-		$data['title'] = 'Gerer le calendrier';
-		
-		//check access rights
-		$data['loggedId'] = $this->session->userdata('id');
-		if (!isset($data['loggedId']) || !is_numeric($data['loggedId']) ) {
-			show_404();
-		}
-		$data['loggedPrivilege'] = $this->session->userdata('privilege');
-		if ($data['loggedPrivilege'] < 3) {
-			show_404();
-		}
-		
-		//initialisation
-		$year = $this->input->post('year');
-		$month = $this->input->post('month');
-		if (!isset($year) || !isset($month)) {
-			$nextMonth = mktime(0, 0, 0, (date("m")+1), 1, date("Y"));
-			$year=date("Y", $nextMonth);
-			$month=date("m", $nextMonth);
-		}
-		$data['year'] = $year;
-		$data['month'] = $month;
-		$newClosedMonth = mktime(0, 0, 0, ($month+1), 1, $year);
-		
-		$file = 'lastValidate.txt';
-		$closedMonth = file_get_contents($file);
-		if (!isset($closedMonth) || $closedMonth=="" ) {
-			$closedMonth=0;
-		}
-		
-		$data['sql'] = $this->Resa_model->validateResaByMonth($newClosedMonth, $closedMonth);
-		file_put_contents($file, $newClosedMonth);
-		
- 		$users = $this->User_model->get_users(TRUE);
- 		foreach ($users as $user) {
- 			$this->Cost_model->persistCost($month, $year, $user["id"]);			
- 		}
-				
-//		redirect('user/', 'refresh');
-		$this->load->view('templates/header', $data);
-		$this->load->view('admin/viewCalendarSetting', $data);
-		$this->load->view('templates/footer');		
-	}
-	*/
 	
 	public function createHolidays() {
 		$data['title'] = 'Gerer le calendrier';

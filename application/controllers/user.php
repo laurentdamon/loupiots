@@ -142,7 +142,6 @@ class user extends CI_Controller {
 		$data['usersOption'] = $this->User_model->get_option_users();
 		
 		$data['payment'] = $this->Payment_model->get_payment_where(array('user_id' => $data['userId'], 'YEAR(month_paided)' => $year, 'MONTH(month_paided)' => $month ));
-
 		$data['costTotal'] = $this->Cost_model->getCost($year, $month, $data['userId']);
 		
 		$this->load->view('templates/header', $data);

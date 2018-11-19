@@ -33,6 +33,7 @@ class CI_Calendar {
 	var $local_time;
 	var $template		= '';
 	var $start_day		= 'sunday';
+	var $start_day_num	= 1;
 	var $month_type		= 'long';
 	var $day_type		= 'abr';
 	var $show_next_prev	= FALSE;
@@ -90,46 +91,47 @@ class CI_Calendar {
 	 * @param	integer	the year
 	 * @param	integer	the month
 	 * @param	array	the data to be shown in the calendar cells
-	 * @return	string
+	 * @return	string	the html to be displayed
 	 */
 	function generate($year = '', $month = '', $data = array(), $forPrint = FALSE) {
-		
-		// Set and validate the supplied month/year
-		if ($year == '') $year  = date("Y", $this->local_time);
-		if ($month == '') $month = date("m", $this->local_time);
-		if (strlen($year) == 1) $year = '200'.$year;
-		if (strlen($year) == 2) $year = '20'.$year;
-		if (strlen($month) == 1) $month = '0'.$month;
-
-		$adjusted_date = $this->adjust_date($month, $year);
-
-		$month	= $adjusted_date['month'];
-		$year	= $adjusted_date['year'];
-
-		$periods = $data['periods'];
-
-		// Determine the total days in the month
-		$total_days = $this->get_total_days($month, $year);
-
-		// Set the starting day of the week
-		$start_days	= array('sunday' => 0, 'monday' => 1, 'tuesday' => 2, 'wednesday' => 3, 'thursday' => 4, 'friday' => 5, 'saturday' => 6);
-		$start_day = ( ! isset($start_days[$this->start_day])) ? 0 : $start_days[$this->start_day];
-
-		// Set the starting day number
-		$local_date = mktime(12, 0, 0, $month, 1, $year);
-		$date = getdate($local_date);
-		$day  = $start_day + 1 - $date["wday"];
-		while ($day > 1) {
-			$day -= 7;
-		}
 		
 		// Set the current month/year/day
 		// We use this to determine the "today" date
 		$cur_year	= date("Y", $this->local_time);
 		$cur_month	= date("m", $this->local_time);
 		$cur_day	= date("j", $this->local_time);
+		
+		// Set and validate the supplied month/year
+		if ($year == '') $year  = $cur_year;
+		if ($month == '') $month = $cur_month;
+		if (strlen($year) == 1) $year = '200'.$year;
+		if (strlen($year) == 2) $year = '20'.$year;
+		if (strlen($month) == 1) $month = '0'.$month;
+		$month1Dig = ltrim($month, "0");
+
+		$adjusted_date = $this->adjust_date($month, $year);
+		$month	= $adjusted_date['month'];
+		$year	= $adjusted_date['year'];
+		
+		// Define date
+		$date = getdate(mktime(0,0,0,$month1Dig, 1, $year));
+		
+		// Determine the total days in the month
+		$total_days = cal_days_in_month(CAL_GREGORIAN, $month1Dig, $year);
+
+		// Set the starting day number
+		$day  = $this->start_day_num +1 - $date["wday"];
+		while ($day > 1) {
+			$day -= 7;
+		}
+		
+		// Set the starting day of the week
+		$start_days	= array('sunday' => 0, 'monday' => 1, 'tuesday' => 2, 'wednesday' => 3, 'thursday' => 4, 'friday' => 5, 'saturday' => 6);
+		$start_day = ( ! isset($start_days[$this->start_day])) ? 0 : $start_days[$this->start_day];
 
 		$is_current_month = ($cur_year == $year AND $cur_month == $month) ? TRUE : FALSE;
+
+		$periods = $data['periods'];
 
 		// Generate the template data array
 		$this->parse_template();
@@ -180,13 +182,14 @@ class CI_Calendar {
 		$out .= "\n";
 
 		// Heading title for child
-		$this->temp['week_child_cell'] = str_replace('{famille}', $data['users']['name'], $this->temp['week_child_cell']);
+		$firstChild = current($data['children']);
+		$this->temp['week_child_cell'] = str_replace('{famille}', $firstChild['user_name'], $this->temp['week_child_cell']);
 		$out .= $this->temp['week_child_cell'];
 		$out .= "\n";
 
 		$day_names = $this->get_day_names();
 		for ($i = 0; $i < 7; $i ++) {
-			$day_name = $day_names[($start_day + $i) %7];
+			$day_name = $day_names[($this->start_day_num + $i) %7];
 			if ($day_name=='Samedi' || $day_name=='Dimanche' || $day_name=='Mercredi') {
 				$out .= str_replace('{week_day}', $day_name, $this->temp['week_dayoff_cell']);
 			} else {
@@ -206,12 +209,12 @@ class CI_Calendar {
 		$out .= "\n";
 		
 		// next family link
-		$this->temp['familly_next_cell'] = str_replace('{next_family}', $data['users']['id']+1, $this->temp['familly_next_cell']);
-		$this->temp['familly_next_cell'] = str_replace('{previous_family}', $data['users']['id']-1, $this->temp['familly_next_cell']);
+		$this->temp['familly_next_cell'] = str_replace('{next_family}', $firstChild['user_id']+1, $this->temp['familly_next_cell']);
+		$this->temp['familly_next_cell'] = str_replace('{previous_family}', $firstChild['user_id']-1, $this->temp['familly_next_cell']);
 		$out .= $this->temp['familly_next_cell'];
 
 		for ($i = 0; $i < 7; $i ++) {
-			$day_name = $day_names[($start_day + $i) %7];
+			$day_name = $day_names[($this->start_day_num + $i) %7];
 			if ($day_name=='Samedi' || $day_name=='Dimanche' || $day_name=='Mercredi') {
 				$out .= "<td id ='period_mid_day'>&nbsp;</td>";
 			} else {
@@ -240,7 +243,8 @@ class CI_Calendar {
 		$out .= $this->temp['period_row_end'];
 		$out .= "\n";
 
-		// Build the main body of the calendar
+$debug = "";
+		// Build the main body (list of days) of the calendar
 		while ($day <= $total_days) {
 				
 			//days row
@@ -251,10 +255,9 @@ class CI_Calendar {
 			$out .= "<td>&nbsp;</td>";
 
 			for ($i = 0; $i < 7; $i++) {
-				$day_name = $day_names[($start_day + $i) %7];
+				$day_name = $day_names[($this->start_day_num + $i) %7];
 
-				//Determine if holidays
-				$currentDate = mktime(0, 0, 0, $month, $day, $year);
+				$currentDate = mktime(0,0,0,$month1Dig, $day, $year);
 				
 				if ($day_name=='Samedi' || $day_name=='Dimanche' || $day_name=='Mercredi') {
 					$out .= ($is_current_month == TRUE AND $day == $cur_day) ? $this->temp['cal_celloff_start_today'] : $this->temp['cal_celloff_start'];
@@ -262,16 +265,14 @@ class CI_Calendar {
 					//$out .= ($is_current_month == TRUE AND $day == $cur_day) ? $this->temp['cal_cellhol_start_today'] : $this->temp['cal_cellhol_start'];
 					if ($is_current_month == TRUE AND $day == $cur_day) {
 						$temp = $this->temp['cal_cellhol_start_today'];
-					} else {
-						$temp = str_replace('{period_size}', sizeof($periods[$day_name]), $this->temp['cal_cellhol_start']);
 					}
+					$temp = str_replace('{period_size}', sizeof($periods[$day_name]), $this->temp['cal_cellhol_start']);
 					$out .= $temp;
 				} else {
 					if ($is_current_month == TRUE AND $day == $cur_day) {
 						$temp = $this->temp['cal_cell_start_today'];
-					} else {
-						$temp = str_replace('{period_size}', sizeof($periods[$day_name]), $this->temp['cal_cell_start']);
 					}
+					$temp = str_replace('{period_size}', sizeof($periods[$day_name]), $this->temp['cal_cell_start']);
 					$out .= $temp;
 				}
 
@@ -291,7 +292,7 @@ class CI_Calendar {
 			$out .= "\n";
 				
 			//child row
-			$children = $data['users']['children'];
+			$children = $data['children'];
 			foreach ($children as $child) {
 				$childNum=$child['id'];
 				$resas = $data['resas'][$childNum];
@@ -303,18 +304,18 @@ class CI_Calendar {
 				$out .= "\n";
 				for ($i = 0; $i < 7; $i++) {
 					$currentDay=$rowDay[$i];
-					$day_name = $day_names[($start_day + $i) %7];
+					$day_name = $day_names[($this->start_day_num + $i) %7];
 					if ($day_name=='Samedi' || $day_name=='Dimanche' || $day_name=='Mercredi') {
 						$out .= "<td class='mid_periodoff'>&nbsp;</td>";
 					} else {
-						if ($currentDay > 0 AND $currentDay <= $total_days) {
-							$currentDate = mktime(0, 0, 0, $month, $currentDay, $year);
+						if ($currentDay >= 0 AND $currentDay < $total_days) {
+							$currentDate = mktime(0,0,0, $month1Dig, $currentDay, $year);
 							$date=date("Y-m-d", $currentDate);
 							
 							$j=0;
 							foreach ($periods[$day_name] as $period) {
+								$j++;
 								if (array_key_exists('holidays', $data) && in_array($currentDate, $data['holidays'])) {
-									$j++;
 									if (!isset($period["next_period"]) && "AM"==$period["type"]) {
 										$out .= "<td class='mid_periodoff'>&nbsp;</td>";
 									} elseif (sizeof($periods[$day_name])==$j) {
@@ -325,14 +326,13 @@ class CI_Calendar {
 								} else {
 									$resaType="period";
 									foreach($resas as $resa) {
-										if ($resa["child_id"]==$childNum && $resa["date"]==$date && $resa["period_id"]==$period["id"]) {
+										if ($resa["date"]==$date && $resa["period_id"]==$period["periodId"]) {
                                             $resaType="period_".$resa["resa_type"];
 											break;
 										} else {
 											$resaType="period";
 										}
 									}
-									$j++;
 									if (!is_null($forPrint) && $forPrint) {
 										if (!isset($period["next_period"]) && "AM"==$period["type"]) {
 											$t1 = str_replace('{year}', $year, $this->temp['cal_mid_period_cell_print']);
@@ -385,11 +385,8 @@ class CI_Calendar {
 		$out .= "\n";
 		$out .= $this->temp['table_close'];
 
-//		$out .= print_r($outtest);
-//		$clot = strtotime("29 March 2018") ;
-//		$out .= "test $clot";
-//		$out .= $test;
-		
+		$out .= $debug;
+
 		return $out;
 	}
 
@@ -509,37 +506,6 @@ class CI_Calendar {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Total days in a given month
-	 *
-	 * @access	public
-	 * @param	integer	the month
-	 * @param	integer	the year
-	 * @return	integer
-	 */
-	function get_total_days($month, $year)
-	{
-		$days_in_month	= array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
-
-		if ($month < 1 OR $month > 12)
-		{
-			return 0;
-		}
-
-		// Is the year a leap year?
-		if ($month == 2)
-		{
-			if ($year % 400 == 0 OR ($year % 4 == 0 AND $year % 100 != 0))
-			{
-				return 29;
-			}
-		}
-
-		return $days_in_month[$month - 1];
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
 	 * Set Default Template Data
 	 *
 	 * This is used in the event that the user has not created their own template
@@ -564,7 +530,7 @@ class CI_Calendar {
 						'cal_child_cell'			=> '<td>{child}</td>',
 						'week_day_cell'				=> '<td>{week_day}</td>',
 						'week_row_end'				=> '</tr>',
-						'period_row_end'				=> '</tr>',
+						'period_row_end'			=> '</tr>',
 						'cal_row_start'				=> '<tr>',
 						'cal_cell_start'			=> '<td>',
 						'cal_cell_start_today'		=> '<td>',
