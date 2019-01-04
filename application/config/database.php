@@ -50,8 +50,8 @@ $active_record = TRUE;
 
 // localhost
 $db['default']['hostname'] = 'localhost';
-$db['default']['username'] = 'creche';
-$db['default']['password'] = 'password';
+$db['default']['username'] = 'root';
+$db['default']['password'] = '';
 $db['default']['database'] = 'creche';
 // on free PROD
 // $db['default']['hostname'] = '172.20.244.7';

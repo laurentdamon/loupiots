@@ -7,6 +7,7 @@ class Cost_model extends CI_Model {
 		$this->load->database();
 		$this->load->model('Resa_model');
 		$this->load->model('Payment_model');
+		$this->load->model('Balance_model');
 	}
 		
 	function create($cost) {
@@ -147,6 +148,51 @@ class Cost_model extends CI_Model {
 
 		return $cost;
 	}
+	
+	public function getBalance($year, $month, $userId) {
+		$balance['sum']['resa'] = 0;
+		$balance['sum']['depassement'] = 0;
+		$balance['sum']['total'] = 0;
+		
+		$children = $this->db->get_where('child', array('user_id' => $userId, 'is_active' => true))->result_array();
+		foreach ($children as $child) {
+			$childNum=$child['id'];
+			//cout des resas du mois courant-1
+			$resas[$childNum]= $this->Resa_model->get_full_resa_where(array('child_id' => $childNum, 'YEAR(date)' => $year, 'MONTH(date)' => $month-1, 'resa_type !=' => 3 ));
+			
+			if (sizeof($resas[$childNum])>0) {
+				$price = $resas[$childNum][0]['price'];
+				$totalResa = sizeof($resas[$childNum])*$price;
+				$balance['children'][$childNum]['resaStr'] = sizeof($resas[$childNum])." x ".$price." = ".$totalResa;
+			} else {
+				$totalResa = 0;
+				$balance['children'][$childNum]['resaStr'] = "0";
+			}
+			//cout des depassemants du mois courant-2
+			$depassement[$childNum]= $this->Resa_model->get_full_resa_where(array('child_id' => $childNum, 'YEAR(date)' => $year, 'MONTH(date)' => $month-2, 'resa_type =' => 3 ));
+			if (sizeof($depassement[$childNum])>0) {
+				$price = $depassement[$childNum][0]['price'];
+				$totalDepas = sizeof($depassement[$childNum])*$price;
+				$balance['children'][$childNum]['depassementStr'] = sizeof($depassement[$childNum])." x ".$price." = ".$totalDepas;
+			} else {
+				$totalDepas = 0;
+				$balance['children'][$childNum]['depassementStr'] = "0";
+			}
+			
+			$balance['children'][$childNum]['total'] = $totalResa + $totalDepas;
+			
+			$balance['sum']['resa'] += $totalResa;
+			$balance['sum']['depassement'] += $totalDepas;
+		}
+		$balance['sum']['total'] = $balance['sum']['resa'] + $balance['sum']['depassement'];
+		
+		//restant du du mois courant-2
+		$balance['debt'] = current($this->Balance_model->get_balance_where(array('user_id' => $userId, 'YEAR(month)' => $year, 'MONTH(month)' => $month-2 )));
+		
+		
+		return $balance;
+	}
+	
 	
 }
 ?>

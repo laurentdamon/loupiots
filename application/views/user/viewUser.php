@@ -80,13 +80,12 @@
 			<?php
 			if (isset($user['children'])) {
 				foreach ($user['children'] as $child) {
-					$childNum=$child['id'];
 					echo "
 						<tr>
 							<td>".$child['name']."</td>
-							<td><div class='".$childNum."-cost'></div></td>
-							<td><div class='".$childNum."-costDepassement'></div></td>
-							<td><b><div class='".$childNum."-total'></div></b></td>
+							<td><div class='".$child['id']."-cost'></div></td>
+							<td><div class='".$child['id']."-costDepassement'></div></td>
+							<td><b><div class='".$child['id']."-total'></div></b></td>
 						</tr>";
 				}
 			}
@@ -120,27 +119,27 @@
 			<?php
 			if (isset($user['children'])) {
 				foreach ($user['children'] as $child) {
-					$childNum=$child['id'];
+					$childNum = $child['id'];
 					echo "
 						<tr>
 							<td>".$child['name']."</td>
-							<td>&nbsp;</td>
-							<td><div class='".$childNum."-costDepassementPrev'></div></td>
-							<td><div class='".$childNum."-cost'></div></td>
-							<td><b><div class='".$childNum."-total'></div></b></td>
+							<td>&nbsp;-</td>
+							<td>".$balance['children'][$childNum]['depassementStr']."</td>
+							<td>".$balance['children'][$childNum]['resaStr']."</td>
+							<td><b>".$balance['children'][$childNum]['total']."</b></td>
 						</tr>";
 				}
 			}
 			?>
 				<tr>
 					<td>Total</td>
-					<td><div class='debt'></div></td>
-					<td><div class='totalDepassementPrev'></div></td>
-					<td><div class='cost'></div></td>
-					<td><b><div class='total'></div></b></td>
+					<td></td>
+					<td><?php echo $balance['sum']['depassement'] ?></td>
+					<td><?php echo $balance['sum']['resa'] ?></td>
+					<td><b><?php echo $balance['sum']['total'] ?></b></td>
 				</tr>
 		</table>
-
+<?php //print_r($balance)?>
 	</section>
 
 <section class="container_rigth">
@@ -154,7 +153,7 @@
 	
 	<table border=1>
 		<tr>
-			<td>Date de Paiment</td>
+			<td>Date de Paiement</td>
 			<td>Montant</td>
 			<td>Type</td>
 			<td>Statut</td>

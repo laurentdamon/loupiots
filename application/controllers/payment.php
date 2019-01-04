@@ -31,7 +31,7 @@ class payment extends CI_Controller {
 	}
 	
 	public function create($userId='') {
-		//$this->output->enable_profiler(TRUE);
+		$this->output->enable_profiler(TRUE);
 		
 		//check access rights
 		$data['loggedId']=$this->session->userdata('id');
@@ -209,7 +209,8 @@ class payment extends CI_Controller {
 		
 		foreach ($data['users'] as $userId => $user) {
 		    $data['costTotal'][$userId] = $this->Cost_model->getCost($year, $month, $userId, $data['users'][$userId]['children']);
-		    $data["payments"][$userId] = $data['costTotal'][$userId]["payments"];
+//		    $data["payments"][$userId] = $data['costTotal'][$userId]["payments"];
+		    $data["payments"][$userId] = array();
 			
 			if (sizeof($data["payments"][$userId])==0) {
 				$data["payments"][$userId][0]["status"]="-";
@@ -229,7 +230,6 @@ class payment extends CI_Controller {
 	/*
 	 * Form validation callback functions
 	*/
-	
 	function already_exists() {
 		$userId = $this->input->post('user_id');
 		$month = $this->input->post('month');

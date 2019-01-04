@@ -29,14 +29,10 @@ if ($now > $nextCloseDate) {
 	touch($lastCloseFileName);
 	file_put_contents($lastCloseFileName, $closeDate);
 	
-	//sauvegarder le cout
-	
 	//si nouveau mois verouiller le debit
 	//si ligne cost du mois est vide => c'est un nouveau mois.
 	//current month
-	
-	//last month paid 
-	//if last cost.month/yearpaid < current month/year
+
 }
 
 ?>
