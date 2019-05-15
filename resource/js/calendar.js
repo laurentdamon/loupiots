@@ -3,7 +3,8 @@ $(document).ready(function() {
 	var siteUrl = $("#siteUrl").text();
 	var getResaCalURL = siteUrl + "/resa/getCalendar";
 	var getResaCostURL = siteUrl + "/resa/getCost";
-	var getBalanceURL = siteUrl + "/cost/getBalance";
+	var getResaBillURL = siteUrl + "/resa/getBill";
+	var getCostURL = siteUrl + "/cost/get";
 	var createURL = siteUrl + "/resa/create";
 	var deleteURL = siteUrl + "/resa/delete";
 	var $defer = 
@@ -38,15 +39,36 @@ $(document).ready(function() {
 						}
 					}
 				});
+				$.ajax({
+					url : getResaBillURL,
+					type : "GET",
+					data : getData,
+					dataType : "html",
+					cache : false,
+					success : function(result) {
+						var bill = jQuery.parseJSON(result);
+						$(".bill").html(bill);
+/*						for (var key in bill) {
+							if (key=="sum") {
+								$(".cost").html(bill.sum.resa);
+								$(".totalDepassement").html(bill.sum.depassement);
+								$(".total").html(bill.sum.total);
+							} else if (key=="children") {
+								for (var childId in cost.children) {
+									$("."+childId+"-cost").html(cost.children[childId].resaStr);
+			                        $("."+childId+"-costDepassement").html(bill.children[childId].depassementStr);
+									$("."+childId+"-total").html(bill.children[childId].total);
+								}
+							}
+						}
+*/					}
+				});
 			}
 		});
 	$(".period").live("click", function() {
 		var text = $(this).text();
 		text = $.trim(text);
 		var data = text.split("-");
-
-//		alert("period "+data);
-
 		var $defer = 
 			$.ajax({
 				url : createURL,

@@ -108,6 +108,9 @@
 <div class="holder_content">
 <section class="container_left">
 	<h3>Facture <?php echo $getData['month-1Str'] ?></h3>
+	
+	<?php echo $bill; ?>
+	
 	<table border=1>
 			<tr>
 				<td>&nbsp;</td>

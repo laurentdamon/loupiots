@@ -128,8 +128,8 @@ class user extends CI_Controller {
 		}
 		setlocale(LC_ALL, 'fr_FR','fra');
 		$curMonth = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
-		$data['getData']['curMonthYear']=date("n", $curMonth).date("Y", $curMonth);
-		$data['getData']['viewMonthYear']=$month.$year;
+		$data['getData']['curMonthYear']= mktime(0, 0, 0, date("n", $curMonth), 1, date("Y", $curMonth));
+		$data['getData']['viewMonthYear'] = mktime(0, 0, 0, $month, 1, $year);
 
 		$data['title'] = $data['user']['name'];
 		$data['getData']['year']=$year;
@@ -142,10 +142,9 @@ class user extends CI_Controller {
 		$data['usersOption'] = $this->User_model->get_option_users();
 		
 		$data['payment'] = $this->Payment_model->get_payment_where(array('user_id' => $data['userId'], 'YEAR(month_paided)' => $year, 'MONTH(month_paided)' => $month ));
-		
 //		$data['costTotal'] = $this->Cost_model->getCost($year, $month, $data['userId']);
-		$data['balance'] = $this->Cost_model->getBalance($year, $month, $data['userId']);
-		
+		$data['bill'] = $this->Resa_model->getBill($data['userId'], $year, $month); 
+
 		$this->load->view('templates/header', $data);
 		$this->load->view('user/viewUser', $data);
 		$this->load->view('templates/footer');

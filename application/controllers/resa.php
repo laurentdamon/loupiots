@@ -106,8 +106,8 @@ class resa extends CI_Controller {
 		}
 		$cost['sum']['total'] = $cost['sum']['resa'] + $cost['sum']['depassement'];
 		echo $this->my_json_encode($cost);
-	}
-
+	}	
+		
 	// TODO check version of php
 	public function my_json_encode($data) {
 			switch ($type = gettype($data)) {
