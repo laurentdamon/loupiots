@@ -102,7 +102,7 @@ class user extends CI_Controller {
 	}
 	
 	public function viewUser($id = null, $year = null, $month = null) {
-//		$this->output->enable_profiler(TRUE);
+		$this->output->enable_profiler(TRUE);
 			
 		if (!isset($id) || ($this->session->userdata('id')!=$id && $this->session->userdata('privilege')<2)) {
 			show_404();

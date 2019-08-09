@@ -109,7 +109,7 @@
 <section class="container_left">
 	<h3>Facture <?php echo $getData['month-1Str'] ?></h3>
 	
-	<?php echo $bill; ?>
+<?php //print_r($bill) ; ?>
 	
 	<table border=1>
 			<tr>
@@ -127,22 +127,22 @@
 						<tr>
 							<td>".$child['name']."</td>
 							<td>&nbsp;-</td>
-							<td>".$balance['children'][$childNum]['depassementStr']."</td>
-							<td>".$balance['children'][$childNum]['resaStr']."</td>
-							<td><b>".$balance['children'][$childNum]['total']."</b></td>
+							<td>".$bill['children'][$childNum]['costDepStr']."</td>
+							<td>".$bill['children'][$childNum]['costResaStr']."</td>
+							<td><b>".$bill['children'][$childNum]['sum']."</b></td>
 						</tr>";
 				}
 			}
 			?>
 				<tr>
 					<td>Total</td>
-					<td></td>
-					<td><?php echo $balance['sum']['depassement'] ?></td>
-					<td><?php echo $balance['sum']['resa'] ?></td>
-					<td><b><?php echo $balance['sum']['total'] ?></b></td>
+					<td><?php echo $bill['restToPay'] ?></td>
+					<td><?php echo $bill['children']['total']['costDep'] ?></td>
+					<td><?php echo $bill['children']['total']['costResa'] ?></td>
+					<td><b><?php echo $bill['total'] ?></b></td>
 				</tr>
 		</table>
-<?php //print_r($balance)?>
+		<i>Le restant du ne prend pas en compte les paiements non validés</i>
 	</section>
 
 <section class="container_rigth">

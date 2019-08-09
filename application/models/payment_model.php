@@ -7,8 +7,6 @@ class Payment_model extends CI_Model {
 
 	public function __construct() {
 		$this->load->database();
-//		$this->load->model('Resa_model');
-//		$this->load->model('Cost_model');
 	}
 		
 	function create($payment) {

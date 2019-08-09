@@ -9,6 +9,7 @@ class Resa_model extends CI_Model {
 	public function __construct() {
 		$this->load->database();
 		$this->load->model('Period_model');
+		$this->load->model('Payment_model');
 	}
 		
 	/**
@@ -62,7 +63,6 @@ class Resa_model extends CI_Model {
 
 	function validateResaByMonth($newClosedMonth, $closedMonth) {
 		$resas = array();
-		//$sql = "SELECT * FROM ".$this->resa_table." WHERE MONTH(date)='".date("m", $closedMonth)."' and YEAR(date)='".date("Y", $closedMonth)."'";
 		$sql = "SELECT * FROM ".$this->resa_table." WHERE date > '".date("Y-m-d", $newClosedMonth)."' and resa_type = 2 ";
 		$resas = $this->db->query($sql);
 		if ($resas->num_rows() > 0) {
@@ -114,6 +114,26 @@ class Resa_model extends CI_Model {
 		$sql .= " AND period.type = '".$AMPM."' AND reservation.date = '".date("Y-m-d", strtotime($date))."' AND child.class_id = '".$classId."'";
 		$sql .= " GROUP BY child.name, users.name";
 		return $this->db->query($sql)->result_array();
+	}
+
+	function getTotalCost($userId) {
+		$results = array();
+		$sql = "SELECT *";
+		$sql .= " FROM ".$this->resa_table.", ".$this->period_table.", ".$this->child_table.", ".$this->user_table." ";
+		$sql .= " WHERE reservation.child_id=child.id and reservation.period_id=period.id and child.user_id=users.id ";
+		$sql .= " AND users.id = '".$userId."'";
+		$resas = $this->db->query($sql)->result_array();
+		
+		$price = 0;
+		foreach ($resas as $resa) {
+			$type = $resa['resa_type'];
+			if( $type==2) {
+				$price += $resa['price'];
+			} elseif($type==3) {
+				$price += LOUP_DEPASSEMENT_PRICE;
+			}		
+		}	
+		return $price;
 	}
 	
 	// Util function /////////////////////////////////////
@@ -184,42 +204,50 @@ class Resa_model extends CI_Model {
 	}
 	
 	public function getBill($userId, $year, $month) {
-		$monthBilled = mktime(0, 0, 0, $month-1, 1, $year); //mois facturé
-		$monthPrevBill = mktime(0, 0, 0, $month-2, 1, $year); //mois precedent le mois facturé
+		$monthBilled = date('n', mktime(0, 0, 0, $month-1, 1, $year)); //mois facturé
+		$yearBilled = date('Y', mktime(0, 0, 0, $month-1, 1, $year)); //mois facturé
+		$monthPrevBill = date('n', mktime(0, 0, 0, $month-2, 1, $year)); //mois precedent le mois facturé
+		$yearPrevBill = date('Y', mktime(0, 0, 0, $month-2, 1, $year));
+		
+		$totalPayment = $this->Payment_model->get_total_payment_where(array('user_id' => $userId, ));
+		$bill['totalPayment'] = $totalPayment['amount'];
+		$bill['totalCost'] = $this->Resa_model->getTotalCost($userId);
+		$bill['restToPay'] = $bill['totalCost'] - $bill['totalPayment'];
 		
 		$children = $this->db->get_where('child', array('user_id' => $userId, 'is_active' => true))->result_array();
+		$bill['children']['total']['costResa'] = 0;
+		$bill['children']['total']['costDep'] = 0;
+		$bill['total'] = $bill['restToPay'];
 		foreach ($children as $child) {
 			$childNum=$child['id'];
-			//cout des resas du mois facturé
-			$resas[$childNum]= $this->Resa_model->get_full_resa_where(array('child_id' => $childNum, 'YEAR(date)' => $year, 'MONTH(date)' => $month-1, 'resa_type !=' => 3 ));
-			
+			//Resa du mois facturé
+			$resas[$childNum]= $this->Resa_model->get_full_resa_where(array('child_id' => $childNum, 'YEAR(date)' => $yearBilled, 'MONTH(date)' => $monthBilled, 'resa_type !=' => 3 ));
 			if (sizeof($resas[$childNum])>0) {
 				$price = $resas[$childNum][0]['price'];
-				$totalResa = sizeof($resas[$childNum])*$price;
-				$cost['children'][$childNum]['resaStr'] = sizeof($resas[$childNum])." x ".$price." = ".$totalResa;
+				$childResaPrice = sizeof($resas[$childNum])*$price;
+				$bill['children'][$childNum]['costResaStr'] = sizeof($resas[$childNum])." x ".$price." = ".$childResaPrice;
+				$bill['children']['total']['costResa'] += $childResaPrice;				
 			} else {
-				$totalResa = 0;
-				$cost['children'][$childNum]['resaStr'] = "0";
+				$childResaPrice = 0;
+				$bill['children'][$childNum]['costResaStr'] = "0";
 			}
-			//cout des depassemants du mois precedent le mois facturé
-			$depassement[$childNum]= $this->Resa_model->get_full_resa_where(array('child_id' => $childNum, 'YEAR(date)' => $year, 'MONTH(date)' => $month-2, 'resa_type =' => 3 ));
+			
+			//Dépassement du mois precedant le mois facturé
+			$depassement[$childNum]= $this->Resa_model->get_full_resa_where(array('child_id' => $childNum, 'YEAR(date)' => $yearPrevBill, 'MONTH(date)' => $monthPrevBill, 'resa_type =' => 3 ));
 			if (sizeof($depassement[$childNum])>0) {
-				$price = $depassement[$childNum][0]['price'];
-				$totalDepas = sizeof($depassement[$childNum])*$price;
-				$cost['children'][$childNum]['depassementStr'] = sizeof($depassement[$childNum])." x ".$price." = ".$totalDepas;
+				$childDepPrice = sizeof($depassement[$childNum])*LOUP_DEPASSEMENT_PRICE;
+				$bill['children'][$childNum]['costDepStr'] = sizeof($depassement[$childNum])." x ".LOUP_DEPASSEMENT_PRICE." = ".$childDepPrice;
+				$bill['children']['total']['costDep'] += $childDepPrice;				
 			} else {
-				$totalDepas = 0;
-				$cost['children'][$childNum]['depassementStr'] = "0";
+				$childDepPrice = 0;
+				$bill['children'][$childNum]['costDepStr'] = "0";
 			}
 			
-			$cost['children'][$childNum]['total'] = $totalResa + $totalDepas;
-			
-			$cost['sum']['resa'] += $totalResa;
-			$cost['sum']['depassement'] += $totalDepas;
+			$bill['children'][$childNum]['sum'] = $childResaPrice + $childDepPrice;
+			$bill['total'] += $bill['children'][$childNum]['sum'];
 		}
-		$cost['sum']['total'] = $cost['sum']['resa'] + $cost['sum']['depassement'];
 		
-		return "toto222";
+		return $bill;
 	}
 	
 }

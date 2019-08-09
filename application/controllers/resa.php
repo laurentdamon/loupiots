@@ -91,9 +91,8 @@ class resa extends CI_Controller {
 			//cout des depassemants du mois courant
 			$depassement[$childNum]= $this->Resa_model->get_full_resa_where(array('child_id' => $childNum, 'YEAR(date)' => $year, 'MONTH(date)' => $month, 'resa_type =' => 3 ));
 			if (sizeof($depassement[$childNum])>0) {
-				$price = $depassement[$childNum][0]['price'];
-				$totalDepas = sizeof($depassement[$childNum])*$price;
-				$cost['children'][$childNum]['depassementStr'] = sizeof($depassement[$childNum])." x ".$price." = ".$totalDepas;
+				$totalDepas = sizeof($depassement[$childNum])*LOUP_DEPASSEMENT_PRICE;
+				$cost['children'][$childNum]['depassementStr'] = sizeof($depassement[$childNum])." x ".LOUP_DEPASSEMENT_PRICE." = ".$totalDepas;
 			} else {
 				$totalDepas = 0;
 				$cost['children'][$childNum]['depassementStr'] = "0";
