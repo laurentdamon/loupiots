@@ -31,7 +31,7 @@ class calendar extends CI_Controller {
 		if ($data['loggedPrivilege'] < 3) {
 			show_404();
 		}
-		
+/*normandie		
 		$file = 'lastValidate.txt';
 		$closedMonthStr = file_get_contents($file);
 		if (!isset($closedMonth) || $closedMonth=="" ) {
@@ -42,7 +42,7 @@ class calendar extends CI_Controller {
 		$data['closedMonth'] = $closedMonth;
 		$data['month'] = date("n", $closedMonth);
 		$data['year'] = date("Y", $closedMonth);
-
+*/
 		$this->load->view('templates/header', $data);
 		$this->load->view('admin/viewCalendarSetting', $data);
 		$this->load->view('templates/footer');
@@ -86,7 +86,7 @@ class calendar extends CI_Controller {
 			$this->load->view('templates/footer');
 		}
 	}
-
+	
 	
 	/*
 	 * Form validation callback functions

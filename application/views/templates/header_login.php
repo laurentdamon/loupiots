@@ -2,11 +2,13 @@
 <head>
 	<title><?php echo $title ?> - Garderie de Laval</title>
 	
+	<link rel="shortcut icon" href="<?php echo base_url()?>img/favicon.ico" />
+	
 	<link rel="stylesheet" type="text/css" href="<?php echo base_url()?>resource/css/styles.css"/>
 	<link rel="stylesheet" type="text/css" href="<?php echo base_url()?>resource/css/form.css"/>
 
-	<script type="text/javascript" src="<?php echo base_url()?>resource/js/jquery-1.8.2.min.js"></script>
-	<script type="text/javascript" src="<?php echo base_url()?>resource/js/news.js"></script>
+	<script type="text/javascript" src="<?php echo base_url()?>resource/js/jquery-1.8.2.min.js" defer></script>
+	<script type="text/javascript" src="<?php echo base_url()?>resource/js/news.js" defer></script>
 	
 </head>
 <body>

@@ -7,15 +7,17 @@ header('Content-type: text/html; charset=iso-8859-1');
 <head>
 	<title><?php echo $title ?> - Garderie de Laval</title>
 	
+	<link rel="shortcut icon" href="<?php echo base_url()?>resource/img/favicon.ico" />
+	
 	<link rel="stylesheet" type="text/css" href="<?php echo base_url()?>resource/css/calendar.css"/>
 	<link rel="stylesheet" type="text/css" href="<?php echo base_url()?>resource/css/styles.css"/>
 	<link rel="stylesheet" type="text/css" href="<?php echo base_url()?>resource/css/form.css"/>
 	<link rel="stylesheet" type="text/css" href="<?php echo base_url()?>resource/css/jquery-ui-1.9.2.custom.min.css"/>
 	
-	<script type="text/javascript" src="<?php echo base_url()?>resource/js/jquery-1.8.2.min.js"></script>
-	<script type="text/javascript" src="<?php echo base_url()?>resource/js/jquery-ui-1.9.2.custom.min.js"></script>
-	<script type="text/javascript" src="<?php echo base_url()?>resource/js/calendar.js"></script>
-	<script type="text/javascript" src="<?php echo base_url()?>resource/js/misc.js"></script>
+	<script type="text/javascript" src="<?php echo base_url()?>resource/js/jquery-1.8.2.min.js" defer></script>
+	<script type="text/javascript" src="<?php echo base_url()?>resource/js/jquery-ui-1.9.2.custom.min.js" defer></script>
+	<script type="text/javascript" src="<?php echo base_url()?>resource/js/calendar.js" defer></script>
+	<script type="text/javascript" src="<?php echo base_url()?>resource/js/misc.js" defer></script>
 	
 <script>
     </script>

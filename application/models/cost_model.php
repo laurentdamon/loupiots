@@ -11,7 +11,6 @@ class Cost_model extends CI_Model {
 	}
 		
 	function create($cost) {
-		$cost["id"] = "";
 		if(!$this->db->insert($this->cost_table, $cost)) { 
 			return FALSE;						
 		}
@@ -48,19 +47,26 @@ class Cost_model extends CI_Model {
 		$this->db->update($this->cost_table, $cost); 
 	}
 	
+	
+	public function resetTest() {
+	    $this->db->from($this->cost_table);
+	    $this->db->truncate();
+	}
+	
+	
 	// Util function /////////////////////////////////////
+/*normandie
 	function storeOnPaymentUpdate($payment) {
 		$month = date("n", strtotime($payment['month_paided']));
 		$year = date("Y", strtotime($payment['month_paided']));
 		$userId = $payment['user_id'];
 
 		$this->persistCost($month, $year, $userId);
-		/* if payment is validated then 
-		 * 		cost_N['paid']=cost_N['paid']+payment_N['amount'] 
-		 * 		cost_N+1['debt']=geteCost_N - cost_N['paid']
-		 */
+
 	}
-	
+*/	
+
+/*normandie
 	function persistCost($month, $year, $userId) {
 		$costCurrent = $this->getCost($year, $month, $userId);
 		$cost['paid'] = $costCurrent['paid'];
@@ -90,7 +96,7 @@ class Cost_model extends CI_Model {
 		}
 //return $return;
 	}
-	
+*/	
 	function getCost($year, $month, $userId) {
 		$cost['sum']['cost'] = 0;
 		$cost['sum']['depassement'] = 0;
@@ -193,6 +199,51 @@ class Cost_model extends CI_Model {
 		return $balance;
 	}
 	
-	
+	public function setBalance($balanceDate) {
+	    $year = date("Y", $balanceDate);
+	    $month = date("m", $balanceDate);
+	    $prevMonth = date('n', mktime(0, 0, 0, $month-1, 1, $year)); //mois precedent le mois facturé
+	    $prevYear = date('Y', mktime(0, 0, 0, $month-1, 1, $year));
+	    
+	    
+	    $users = $this->User_model->get_users(TRUE);
+	    foreach ($users as $user) {
+	        $userId = $user['id'];
+	        $cost[$userId]['user_id'] = $user['id'];
+	        $cost[$userId]['month_paided'] = date("Y-m-d", $balanceDate);
+	        
+	        //Get validated month payment
+	        $payment = $this->Payment_model->get_total_payment_where(array('user_id' => $user['id'], 'YEAR(month_paided)' => $year, 'MONTH(month_paided)' => $month, 'status' => "3" ));
+	        if (isset($payment['amount'])) {
+	            $cost[$userId]['paid'] = $payment['amount'];
+	        } else {
+	            $cost[$userId]['paid'] = 0;
+	        }
+	        
+	        //Get total resa
+	        $resa = $this->Resa_model->getResaSummary($year, $month, $user['id']);
+	        
+	        //Get last month debt
+	        $DBCostPrev = current($this->Cost_model->get_cost_where(array('user_id' => $user['id'], 'YEAR(month_paided)' => $prevYear, 'MONTH(month_paided)' => $prevMonth )));
+	        if($DBCostPrev) {
+	            $previousDebt = $DBCostPrev["debt"];
+	        } else {
+	            $previousDebt = 0;
+	        }
+	        
+	        $cost[$userId]['debt'] = round(($previousDebt + $resa['sum']['total'] - $cost[$userId]['paid']),2);
+	        
+	        //Store DB
+	        $DBCost = current($this->Cost_model->get_cost_where(array('user_id' => $user['id'], 'YEAR(month_paided)' => $year, 'MONTH(month_paided)' => $month )));
+	        if($DBCost) {
+	            $this->update($DBCost["id"], $cost[$userId]);
+	        } else {
+	            $this->create($cost[$userId]);
+	        }
+	        $cost[$userId]['debug'] = "previousDebt: ".$previousDebt." + resa: ".$resa['sum']['total']." - paid: ".$cost[$userId]['paid']."<br>";
+	    }
+
+	    return $cost;
+	}
 }
 ?>

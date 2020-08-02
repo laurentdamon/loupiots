@@ -135,6 +135,45 @@ class Resa_model extends CI_Model {
 		}	
 		return $price;
 	}
+
+	public function getResaSummary($year, $month, $userId) {
+	    $cost = array();
+	    $cost['sum']['resa'] = 0;
+	    $cost['sum']['depassement'] = 0;
+	    $cost['sum']['total'] = 0;
+	    
+	    $children = $this->db->get_where('child', array('user_id' => $userId, 'is_active' => true))->result_array();
+	    foreach ($children as $child) {
+	        $childNum=$child['id'];
+	        //cout des resas du mois courant
+	        $resas[$childNum]= $this->Resa_model->get_full_resa_where(array('child_id' => $childNum, 'YEAR(date)' => $year, 'MONTH(date)' => $month, 'resa_type !=' => 3 ));
+	        
+	        if (sizeof($resas[$childNum])>0) {
+	            $price = $resas[$childNum][0]['price'];
+	            $totalResa = sizeof($resas[$childNum])*$price;
+	            $cost['children'][$childNum]['resaStr'] = sizeof($resas[$childNum])." x ".$price." = ".$totalResa;
+	        } else {
+	            $totalResa = 0;
+	            $cost['children'][$childNum]['resaStr'] = "0";
+	        }
+	        //cout des depassemants du mois courant
+	        $depassement[$childNum]= $this->Resa_model->get_full_resa_where(array('child_id' => $childNum, 'YEAR(date)' => $year, 'MONTH(date)' => $month, 'resa_type =' => 3 ));
+	        if (sizeof($depassement[$childNum])>0) {
+	            $totalDepas = sizeof($depassement[$childNum])*LOUP_DEPASSEMENT_PRICE;
+	            $cost['children'][$childNum]['depassementStr'] = sizeof($depassement[$childNum])." x ".LOUP_DEPASSEMENT_PRICE." = ".$totalDepas;
+	        } else {
+	            $totalDepas = 0;
+	            $cost['children'][$childNum]['depassementStr'] = "0";
+	        }
+	        
+	        $cost['children'][$childNum]['total'] = $totalResa + $totalDepas;
+	        
+	        $cost['sum']['resa'] += $totalResa;
+	        $cost['sum']['depassement'] += $totalDepas;
+	    }
+	    $cost['sum']['total'] = $cost['sum']['resa'] + $cost['sum']['depassement'];
+	    return  $cost;
+	}
 	
 	// Util function /////////////////////////////////////
 	function setResaFromPostData($post) {
@@ -209,8 +248,10 @@ class Resa_model extends CI_Model {
 		$monthPrevBill = date('n', mktime(0, 0, 0, $month-2, 1, $year)); //mois precedent le mois facturé
 		$yearPrevBill = date('Y', mktime(0, 0, 0, $month-2, 1, $year));
 		
+/*normandie
 		$totalPayment = $this->Payment_model->get_total_payment_where(array('user_id' => $userId, ));
 		$bill['totalPayment'] = $totalPayment['amount'];
+*/
 		$bill['totalCost'] = $this->Resa_model->getTotalCost($userId);
 		$bill['restToPay'] = $bill['totalCost'] - $bill['totalPayment'];
 		

@@ -149,10 +149,13 @@ class payment extends CI_Controller {
 		if ($this->form_validation->run() !== FALSE) {
 			$payment = $this->Payment_model->setPaymentFromPostData($_POST);
 			$this->Payment_model->update($paymentId, $payment);
+
 			//store or update cost + debt
+/*normandie
 			if ($payment["status"]==3  || $previousPaymentStatus==3) {
 				$this->Cost_model->storeOnPaymentUpdate($payment);	
 			}
+*/			
 		}
 
 		if ( sizeof($_POST)==0 ) {

@@ -109,14 +109,16 @@
 <section class="container_left">
 	<h3>Facture <?php echo $getData['month-1Str'] ?></h3>
 	
-<?php //print_r($bill) ; ?>
+<?php
+//echo "<br>Bill<br>";
+//print_r($bill) ;?>
 	
 	<table border=1>
 			<tr>
 				<td>&nbsp;</td>
 				<td>Restant du <?php echo $getData['month-2Str'] ?></td>
-				<td>Depassement <?php echo $getData['month-2Str'] ?></td>
 				<td>Reservation <?php echo $getData['month-1Str'] ?></td>
+				<td>Depassement <?php echo $getData['month-1Str'] ?></td>
 				<td><b>Total</b></td>
 			</tr>
 			<?php
@@ -127,9 +129,9 @@
 						<tr>
 							<td>".$child['name']."</td>
 							<td>&nbsp;-</td>
-							<td>".$bill['children'][$childNum]['costDepStr']."</td>
-							<td>".$bill['children'][$childNum]['costResaStr']."</td>
-							<td><b>".$bill['children'][$childNum]['sum']."</b></td>
+                            <td>".$bill['children'][$childNum]['resaStr']."</td>
+							<td>".$bill['children'][$childNum]['depassementStr']."</td>
+                            <td>&nbsp;-</td>
 						</tr>";
 				}
 			}
@@ -137,9 +139,9 @@
 				<tr>
 					<td>Total</td>
 					<td><?php echo $bill['restToPay'] ?></td>
-					<td><?php echo $bill['children']['total']['costDep'] ?></td>
-					<td><?php echo $bill['children']['total']['costResa'] ?></td>
-					<td><b><?php echo $bill['total'] ?></b></td>
+					<td><?php echo $bill['sum']['resa'] ?></td>
+					<td><?php echo $bill['sum']['depassement'] ?></td>
+					<td><b><?php echo $bill['sum']['total'] ?></b></td>
 				</tr>
 		</table>
 		<i>Le restant du ne prend pas en compte les paiements non validés</i>
@@ -156,28 +158,44 @@
 	
 	<table border=1>
 		<tr>
-			<td>Date de Paiement</td>
+			<td>Date d'encaissement</td>
+			<td>Date paiement</td>
 			<td>Montant</td>
 			<td>Type</td>
 			<td>Statut</td>
 			<td>&nbsp;</td>
 		</tr>
 		<?php 
-		foreach ($payment as $curPayment) {
-			if ($curPayment['status']==1) {
-				$staus = "En attente de r&eacute;ception";
-			} else if ($curPayment['status']==2) {
-				$staus = "Recu";
-			} else if ($curPayment['status']==3) {
-				$staus = "Valid&eacute;";
-			} else if ($curPayment['status']==4) {
-				$staus = "Annul&eacute;";
-			} else {
-				$staus = "En attente de r&eacute;ception";
-			}
+		foreach ($payment_validated as $curPayment) {
 			echo "	
 				<tr>
-					<td>".$curPayment['payment_date']."</td>
+					<td>".$curPayment['month_paided']."</td>
+                    <td>".$curPayment['payment_date']."</td>
+					<td>".$curPayment['amount']."</td>
+					<td>".$curPayment["type"]."</td>
+					<td>Valid&eacute;</td>
+					<td><a class='button' href='".site_url()."/payment/update/".$curPayment["id"]."'>Modifier</a></td>\n
+				</tr>";
+		}
+		if (sizeof($payment_waiting)>0) {
+		    echo "<tr><td colspan=6>En attente de reception</td>";
+		}
+		foreach ($payment_waiting as $curPayment) {
+		    if ($curPayment['status']==1) {
+		        $staus = "En attente de r&eacute;ception";
+		    } else if ($curPayment['status']==2) {
+		        $staus = "Recu";
+		    } else if ($curPayment['status']==3) {
+		        $staus = "Valid&eacute;";
+		    } else if ($curPayment['status']==4) {
+		        $staus = "Annul&eacute;";
+		    } else {
+		        $staus = "En attente de r&eacute;ception";
+		    }
+		    echo "
+				<tr>
+					<td>".$curPayment['month_paided']."</td>
+                    <td>".$curPayment['payment_date']."</td>
 					<td>".$curPayment['amount']."</td>
 					<td>".$curPayment["type"]."</td>
 					<td>".$staus."</td>

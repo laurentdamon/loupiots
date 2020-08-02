@@ -29,9 +29,28 @@ if ($now > $nextCloseDate) {
 	touch($lastCloseFileName);
 	file_put_contents($lastCloseFileName, $closeDate);
 	
-	//si nouveau mois verouiller le debit
-	//si ligne cost du mois est vide => c'est un nouveau mois.
-	//current month
+}
+
+//echo "check balance closing</br>";
+
+$lastBalanceFileName = "lastBalance.txt";
+if (!file_exists($lastBalanceFileName)) {
+    touch($lastBalanceFileName);
+}
+
+//set last balance date
+//touch($lastBalanceFileName, strtotime('06-01-2020'));
+
+$lastBalanceDate=filemtime($lastBalanceFileName);
+//echo "La date de derniere balance etait ".date("l d M Y H:i:s.", $lastBalanceDate)." ".$lastBalanceDate."</br>";
+$nextBalanceDate=date(strtotime('+1 month', $lastBalanceDate));
+//echo "Prochaine balance prevue : ". date('l d M Y H:i:s', $nextBalanceDate) ." ". $nextBalanceDate ."</br>";
+if ($now > $nextBalanceDate) {
+    //Update net balance date file with current date
+
+    file_put_contents($lastBalanceFileName, date("l d M Y H:i:s.", $nextBalanceDate));
+    touch($lastBalanceFileName, $nextBalanceDate);
+    $sql = $this->Cost_model->setBalance($lastBalanceDate);
 
 }
 

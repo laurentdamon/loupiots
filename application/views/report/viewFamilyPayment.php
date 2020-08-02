@@ -38,7 +38,6 @@
 		<?php 
 		foreach ($dates as $dateKey => $date) { //Date row title
 			$rowspan = sizeof($date['payments'])>0 ? sizeof($date['payments']) : 1;
-
 			echo "<tr>";
 			if (isset($date['payments']) && sizeof($date['payments'])>0) {
 				for ($i=0; $i<sizeof($date['payments']); $i++) {
@@ -47,9 +46,9 @@
 						echo "
 						<td rowspan='$rowspan'><a class='button' href='".site_url()."/user/viewUser/".$userId."/".$date["year"]."/".$date["month"]."'>".$date["month"]." - ".$date["year"]."</a></td>
 						<td rowspan='$rowspan'>".$date['monthlyStatus']['debtPrev']."</td>
-						<td rowspan='$rowspan'>".$date['monthlyStatus']['sum']['depassementPrev']."</td>
-						<td rowspan='$rowspan'>".$date['monthlyStatus']['sum']['cost']."</td>
-						<td rowspan='$rowspan'><b>".$date['monthlyStatus']['sum']['total']."</b></td>
+						<td rowspan='$rowspan'>".$date['monthlyStatus']['sum']['depassement']."</td>
+						<td rowspan='$rowspan'>".$date['monthlyStatus']['sum']['resa']."</td>
+						<td rowspan='$rowspan'><b>".$date['monthlyStatus']['totalDu']."</b></td>
 						<td rowspan='$rowspan'>&nbsp;</td>
 						";
 					}
@@ -83,9 +82,9 @@
 				echo "
 					<td rowspan='$rowspan'><a class='button' href='".site_url()."/user/viewUser/".$userId."/".$date["year"]."/".$date["month"]."'>".$date["month"]." - ".$date["year"]."</a></td>
 					<td rowspan='$rowspan'>".$date['monthlyStatus']['debtPrev']."</td>
-					<td rowspan='$rowspan'>".$date['monthlyStatus']['sum']['depassementPrev']."</td>
-					<td rowspan='$rowspan'>".$date['monthlyStatus']['sum']['cost']."</td>
-					<td rowspan='$rowspan'><b>".$date['monthlyStatus']['sum']['total']."</b></td>
+					<td rowspan='$rowspan'>".$date['monthlyStatus']['sum']['depassement']."</td>
+					<td rowspan='$rowspan'>".$date['monthlyStatus']['sum']['resa']."</td>
+					<td rowspan='$rowspan'><b>".$date['monthlyStatus']['totalDu']."</b></td>
 					<td rowspan='$rowspan'>&nbsp;</td>
 									
 					<td>&nbsp;</td>

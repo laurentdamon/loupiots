@@ -233,13 +233,13 @@ class report extends CI_Controller {
                     $bgColor="bgcolor='#bbb'";
                 }
                 $periodId=$period["periodId"];
-                if(isset($totalPeriod) && isset($totalPeriod[$daysName])) {
+/*normandie                if(isset($totalPeriod) && isset($totalPeriod[$daysName])) {
                     $data["output"] .= "<td $bgColor align='center'>".$totalPeriod[$daysName][$periodId]."</td>\n";
                     
                 } else {
                     $data["output"] .= "<td $bgColor align='center'>&nbsp;</td>\n";
                 }
-            }
+*/            }
         }
         $data["output"] .= "</tr>\n";
         
@@ -290,7 +290,7 @@ class report extends CI_Controller {
     }
     
     public function paymentHistory($userId = null, $year = null, $month = null) {
-        //$this->output->enable_profiler(TRUE);
+//        $this->output->enable_profiler(TRUE);
         
         //check access rights
         $data['loggedId'] = $this->session->userdata('id');
@@ -335,7 +335,28 @@ class report extends CI_Controller {
             $data['dates'][$i]['year'] = date("Y", $curDate);
             $where = array('user_id'=>$data['userId'], 'YEAR(month_paided)' => $curYear, 'MONTH(month_paided)' => $curMonth);
             $data['dates'][$i]['payments'] = $this->Payment_model->get_payment_where($where);
-            $data['dates'][$i]['monthlyStatus'] = $this->Cost_model->getCost($curYear, $curMonth, $data['userId']);
+//normandie            $data['dates'][$i]['monthlyStatus'] = $this->Cost_model->getCost($curYear, $curMonth, $data['userId']);
+            $data['dates'][$i]['monthlyStatus'] = $this->Resa_model->getResaSummary($curYear, $curMonth, $data['userId']);
+            
+            $prevDate = strtotime( $curYear."-".($curMonth-1)."-01" );
+            $prevMonth = date("m", $prevDate);
+            $prevYear = date("Y", $prevDate);
+            $DBCostPrev = current($this->Cost_model->get_cost_where(array('user_id' => $data['userId'], 'YEAR(month_paided)' => $prevYear, 'MONTH(month_paided)' => $prevMonth )));
+            if($DBCostPrev) {
+                $data['dates'][$i]['monthlyStatus']['debtPrev'] = $DBCostPrev["debt"];
+            } else {
+                $data['dates'][$i]['monthlyStatus']['debtPrev'] = 0;
+            }
+            
+            $data['dates'][$i]['monthlyStatus']['totalDu'] = $data['dates'][$i]['monthlyStatus']['sum']['total'] + $data['dates'][$i]['monthlyStatus']['debtPrev'];
+            
+            $DBCostPrev = current($this->Cost_model->get_cost_where(array('user_id' => $data['userId'], 'YEAR(month_paided)' => $curYear, 'MONTH(month_paided)' => $curMonth )));
+            if($DBCostPrev) {
+                $data['dates'][$i]['monthlyStatus']['debt'] = $DBCostPrev["debt"];
+            } else {
+                $data['dates'][$i]['monthlyStatus']['debt'] = 0;
+            }
+             
         }
         
         $this->load->view('templates/header', $data);

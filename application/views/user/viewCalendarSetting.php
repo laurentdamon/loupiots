@@ -17,7 +17,7 @@
 	<form class="form" method="post" action="<?php echo site_url()?>/calendar/createHolidays">
 	<div>
 		<label for="start">Debut:</label> 
-		<input name="start" id="start-date" class="InputDate" /> <br/>
+		<input name="start" id="dateSel" class="InputDate" /> <br/>
 		<label for="end">Fin:</label>
 		<input name="end" id="end-date" class="InputDate" /> <br/>
 		<input class="InputSubmit" type="submit" value="Enregistrer"/>

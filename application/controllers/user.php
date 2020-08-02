@@ -102,7 +102,7 @@ class user extends CI_Controller {
 	}
 	
 	public function viewUser($id = null, $year = null, $month = null) {
-		$this->output->enable_profiler(TRUE);
+//		$this->output->enable_profiler(TRUE);
 			
 		if (!isset($id) || ($this->session->userdata('id')!=$id && $this->session->userdata('privilege')<2)) {
 			show_404();
@@ -127,8 +127,8 @@ class user extends CI_Controller {
 			}
 		}
 		setlocale(LC_ALL, 'fr_FR','fra');
-		$curMonth = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
-		$data['getData']['curMonthYear']= mktime(0, 0, 0, date("n", $curMonth), 1, date("Y", $curMonth));
+		$curDate = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
+		$data['getData']['curMonthYear']= mktime(0, 0, 0, date("n", $curDate), 1, date("Y", $curDate));
 		$data['getData']['viewMonthYear'] = mktime(0, 0, 0, $month, 1, $year);
 
 		$data['title'] = $data['user']['name'];
@@ -141,10 +141,29 @@ class user extends CI_Controller {
 		
 		$data['usersOption'] = $this->User_model->get_option_users();
 		
-		$data['payment'] = $this->Payment_model->get_payment_where(array('user_id' => $data['userId'], 'YEAR(month_paided)' => $year, 'MONTH(month_paided)' => $month ));
-//		$data['costTotal'] = $this->Cost_model->getCost($year, $month, $data['userId']);
-		$data['bill'] = $this->Resa_model->getBill($data['userId'], $year, $month); 
-
+		//Data for facture and payment
+		$data['payment_waiting'] = $this->Payment_model->get_payment_where(array('user_id' => $data['userId'], 'YEAR(payment_date)' => $year, 'MONTH(payment_date)' => $month, 'status !=' => 3 ));
+		$data['payment_validated'] = $this->Payment_model->get_payment_where(array('user_id' => $data['userId'], 'YEAR(month_paided)' => $year, 'MONTH(month_paided)' => $month, 'status' => 3 ));
+		//normandie		$data['bill_old'] = $this->Resa_model->getBill($data['userId'], $year, $month); 
+		
+		//data for previous month resa
+		$prevDate = strtotime( $year."-".($month-1)."-01" );
+		$prevMonth = date("m", $prevDate);
+		$prevYear = date("Y", $prevDate);
+		$data['bill'] = $this->Resa_model->getResaSummary($prevYear, $prevMonth, $data['userId']); 
+		
+		//data for 2 months ago debt
+		$prevDate2 = strtotime( $year."-".($month-2)."-01" );
+		$prevMonth2 = date("m", $prevDate2);
+		$prevYear2 = date("Y", $prevDate2);
+		$DBCostPrev = current($this->Cost_model->get_cost_where(array('user_id' => $data['userId'], 'YEAR(month_paided)' => $prevYear2, 'MONTH(month_paided)' => $prevMonth2 )));
+		if($DBCostPrev) {
+		    $data['bill']['restToPay'] = $DBCostPrev["debt"];
+		} else {
+		    $data['bill']['restToPay'] = 0;
+		}
+		$data['bill']['sum']['total'] = $data['bill']['sum']['resa'] + $data['bill']['sum']['depassement'] + $data['bill']['restToPay'];
+		
 		$this->load->view('templates/header', $data);
 		$this->load->view('user/viewUser', $data);
 		$this->load->view('templates/footer');
