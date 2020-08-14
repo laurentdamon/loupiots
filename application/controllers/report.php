@@ -66,7 +66,7 @@ class report extends CI_Controller {
                 $resasPM = $this->Resa_model->getClassroomCallPerDay($dateStr, $class["id"], "PM");
                 $outputPM .= "<td>";
                 foreach( $resasPM as $resaPM ) {
-                    $outputPM .= $resaPM["childName"]." ".$resaPM["name"]." ".substr($resaPM["time"], 0, 5);
+                    $outputPM .= $resaPM["childName"]." ".$resaPM["name"]." ".substr($resaPM["stopTime"], 0, 5);
                     $outputPM .= "<br>";
                 }
                 $outputPM .= "</td>";
@@ -74,7 +74,7 @@ class report extends CI_Controller {
                 $resasAM = $this->Resa_model->getClassroomCallPerDay($dateStr, $class["id"], "AM");
                 $outputAM .= "<td>";
                 foreach( $resasAM as $resaAM ) {
-                    $outputAM .= $resaAM["childName"]." ".$resaAM["name"]." ".substr($resaAM["time"], 0, 5);
+                    $outputAM .= $resaAM["childName"]." ".$resaAM["name"]." ".substr($resaAM["startTime"], 0, 5);
                     $outputAM .= "<br>";
                 }
                 $outputAM .= "</td>";

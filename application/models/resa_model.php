@@ -108,7 +108,7 @@ class Resa_model extends CI_Model {
 	
 	function getClassroomCallPerDay($date, $classId, $AMPM) {
 		$results = array();
-		$sql = "SELECT child.name as childName, users.name, max(period.stop_time) as time";
+		$sql = "SELECT child.name as childName, users.name, max(period.stop_time) as stopTime, min(period.start_time) as startTime";
 		$sql .= " FROM ".$this->resa_table.", ".$this->period_table.", ".$this->child_table.", ".$this->user_table." ";
 		$sql .= " WHERE reservation.child_id=child.id and reservation.period_id=period.id and child.user_id=users.id ";
 		$sql .= " AND period.type = '".$AMPM."' AND reservation.date = '".date("Y-m-d", strtotime($date))."' AND child.class_id = '".$classId."'";
