@@ -8,7 +8,7 @@ class balance extends CI_Controller {
 		$this->load->model('User_model');
 		$this->load->model('Period_model');
 		$this->load->model('Payment_model');
-		$this->load->model('Balance_model');
+//normandie		$this->load->model('Balance_model');
 	}
 
 	function index() {
@@ -17,7 +17,7 @@ class balance extends CI_Controller {
 	public function get() {
 		//$this->output->enable_profiler(TRUE);
 		
-		$data = $this->Balance_model->getBalance($_GET['year'], $_GET['month'], $_GET['user_id']);
+//normandie		$data = $this->Balance_model->getBalance($_GET['year'], $_GET['month'], $_GET['user_id']);
 		echo $this->my_json_encode($data);
 	}
 	

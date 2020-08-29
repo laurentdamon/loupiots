@@ -30,7 +30,7 @@
 			<table border=1>
 			<tr>
 				<td>Restant du<br>mois precedent</td>
-				<td>D&eacute;passement<br>mois precedent</td>
+				<td>D&eacute;passement<br>mois</td>
 				<td>Mois courant du</td>
 				<td>Montant total du</td>
 				<td>&nbsp;</td>
@@ -61,8 +61,8 @@
 				echo "<tr>";
 				if ($row==0) {
 					echo "<td rowspan=".sizeof($payments[$userId]).">".$costTotal[$userId]['debtPrev']."</td>		
-   						<td rowspan=".sizeof($payments[$userId]).">".$costTotal[$userId]['sum']['depassementPrev']."</td>		
-   						<td rowspan=".sizeof($payments[$userId]).">".$costTotal[$userId]['sum']['cost']."</td>		
+   						<td rowspan=".sizeof($payments[$userId]).">".$costTotal[$userId]['sum']['depassement']."</td>		
+   						<td rowspan=".sizeof($payments[$userId]).">".$costTotal[$userId]['sum']['resa']."</td>		
    						<td rowspan=".sizeof($payments[$userId])."><b>".$costTotal[$userId]['sum']['total']."</b></td>		
    						<td rowspan=".sizeof($payments[$userId]).">&nbsp;</td>";
 				}

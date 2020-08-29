@@ -28,9 +28,9 @@
 		BIC: CMCIFR2A<br/>
 		</span>
 		
-		<label for="paymentMonth">Mois pay&eacute;</label>
-		<select name="month"><option value="0">Mois:</option><?php echo generate_options(1,12,'callback_month')?></select>
-   		<select name="year"><?php echo generate_options(date('Y')+1,2010)?></select>
+		<label for="paymentMonth">Mois pay&eacute; :</label><?php echo strftime("%B %Y", strtotime($date)) ?> 
+		<input type="hidden" name="month" value="<?php echo date("n", strtotime($date)) ?>" /><br/>
+		<input type="hidden" name="year" value="<?php echo date("Y", strtotime($date)) ?>" /><br/>
 	
 		<span>
 		<?php

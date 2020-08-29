@@ -75,7 +75,7 @@ class user extends CI_Controller {
 			$this->form_validation->set_rules('name', 'Nom', 'trim|required|xss_clean');
 			$this->form_validation->set_rules('privilege', 'Privilege', 'required');
 			$this->form_validation->set_rules('exists', 'Exists', 'callback_username_already_exists');
-			$pass = "welcome.".$this->input->post('mail');
+			$pass = $this->input->post('mail');
 			if ($this->form_validation->run() !== FALSE) {
 				$data['userId'] = $this->User_model->create($mail, $pass, $name, $privilege);
 				$data['user'] = $this->User_model->get_users(FALSE, $data['userId']);

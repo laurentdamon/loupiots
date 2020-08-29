@@ -31,7 +31,7 @@ class payment extends CI_Controller {
 	}
 	
 	public function create($userId='') {
-		$this->output->enable_profiler(TRUE);
+//		$this->output->enable_profiler(TRUE);
 		
 		//check access rights
 		$data['loggedId']=$this->session->userdata('id');
@@ -53,6 +53,7 @@ class payment extends CI_Controller {
 		$data['payment_types'] = $this->payment_types;
 		$data['payment_status'] = $this->payment_status;
 		$data['banques'] = $this->banks;
+		$data['date'] = date("Y-n-j", strtotime('previous month'));
 
 		$data['loggedPrivilege'] = $this->session->userdata('privilege');
 		if ($data['loggedPrivilege'] >= 2) {
@@ -211,11 +212,32 @@ class payment extends CI_Controller {
 		$data['banks'] = $this->banks;
 		
 		foreach ($data['users'] as $userId => $user) {
-		    $data['costTotal'][$userId] = $this->Cost_model->getCost($year, $month, $userId, $data['users'][$userId]['children']);
+//normandie		    $data['costTotal'][$userId] = $this->Cost_model->getCost($year, $month, $userId, $data['users'][$userId]['children']);
 //		    $data["payments"][$userId] = $data['costTotal'][$userId]["payments"];
-		    $data["payments"][$userId] = array();
-			
-			if (sizeof($data["payments"][$userId])==0) {
+
+		    
+		    $data['costTotal'][$userId] = $this->Resa_model->getResaSummary($year, $month, $userId);
+
+		    $prevDate = strtotime( $year."-".($month-1)."-01" );
+		    $prevMonth = date("m", $prevDate);
+		    $prevYear = date("Y", $prevDate);
+		    $DBCostPrev = current($this->Cost_model->get_cost_where(array('user_id' => $userId, 'YEAR(month_paided)' => $prevYear, 'MONTH(month_paided)' => $prevMonth )));
+		    if($DBCostPrev) {
+		        $data['costTotal'][$userId]['debtPrev'] = $DBCostPrev["debt"];
+		    } else {
+		        $data['costTotal'][$userId]['debtPrev'] = 0;
+		    }
+
+		    $DBCost = current($this->Cost_model->get_cost_where(array('user_id' => $userId, 'YEAR(month_paided)' => $year, 'MONTH(month_paided)' => $month )));
+		    if($DBCostPrev) {
+		        $data['costTotal'][$userId]['debt'] = $DBCost["debt"];
+		    } else {
+		        $data['costTotal'][$userId]['debt'] = 0;
+		    }
+		    
+		    $where = array('user_id'=>$userId, 'YEAR(month_paided)' => $year, 'MONTH(month_paided)' => $month);
+		    $data["payments"][$userId] = $this->Payment_model->get_payment_where($where);		    		    
+		    if (sizeof($data["payments"][$userId])==0) {
 				$data["payments"][$userId][0]["status"]="-";
 				$data["payments"][$userId][0]["amount"]="-";
    				$data["payments"][$userId][0]["payment_date"]="-";

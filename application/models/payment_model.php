@@ -80,7 +80,7 @@ class Payment_model extends CI_Model {
 		$payment["payment_date"] = date('Y-m-d');
 		$payment["type"] = $post['type'];
 		$payment["bank_id"] = $post['bank'];
-		if (isset($post['chequeNum'])) {
+		if (isset($post['chequeNum']) && $post['chequeNum']!='') {
 			$payment["cheque_Num"] = $post['chequeNum'];
 		} else {
 			$payment["cheque_Num"] = 0;

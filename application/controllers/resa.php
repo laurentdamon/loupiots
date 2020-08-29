@@ -32,7 +32,7 @@ class resa extends CI_Controller {
 			$output=false;
 		}
 		$output["resaData"] = $resaData;
-		$output["POST"] = $_POST;
+//normandie		$output["POST"] = $_POST;
 		echo $this->my_json_encode(array_values($output));
 	}
 
@@ -54,7 +54,7 @@ class resa extends CI_Controller {
 	}
 
 	public function getCalendar() {
-//		$this->output->enable_profiler(TRUE);
+		$this->output->enable_profiler(TRUE);
 		
 		$this->Calendar_model->init($_REQUEST['user_id']);
 		$query = $this->db->get_where('child', array('user_id' => $_REQUEST['user_id']));

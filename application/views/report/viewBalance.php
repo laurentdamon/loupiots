@@ -19,7 +19,8 @@
 
 <div class="holder_content">
 <?php
-//print_r($periodPrices);
+//print_r($balance);
+
 //echo "<br>";
 //echo $sql;
 
@@ -27,19 +28,19 @@
 
 	<?php if ($loggedPrivilege == 3) { 		?>
 		<h3>Balance comptable <?php echo callback_month($month)." ".$year ?></h3>
-		<h4>Paiment</h4>
+		<h4>Paiement</h4>
 			<ul>
-				<li>Declare : <?php echo $declared['amount'] ?></li>
-				<li>Valide : <?php echo $validated['amount'] ?></li>
+				<li>Declare : <?php echo round($declared['amount'],2) ?></li>
+				<li>Valide : <?php echo round($validated['amount'],2) ?></li>
 			</ul>
 		<h4>Reservations</h4>
 			<table border=1>
-				<tr><td>Standard : </td><td><?php echo $resa['str'] ?> </td><td> <?php echo $resa['total'] ?></td></tr>
-				<tr><td>Depassement mois precedent : </td><td><?php echo $depassementPrev['str'] ?> </td><td> <?php echo $depassementPrev['total'] ?></td></tr>
-				<tr><td>Total reservation : </td><td> &nbsp;</td><td><?php echo $totalResa ?></td></tr>
-				<tr><td>Restant du mois precedent : </td><td>&nbsp;</td><td><?php echo $debt ?></td></tr>
-				<tr><td>Reste a paye : </td><td>&nbsp;</td><td><?php echo $rest ?></td></tr>
-				<tr><td>Total du : </td><td>&nbsp;</td><td><?php echo $totaldu ?></td></tr>
+				<tr><td>Standard : </td><td> <?php echo round($resa,2) ?></td></tr>
+				<tr><td>Depassement : </td><td> <?php echo round($depassement,2) ?></td></tr>
+				<tr><td>Total reservation : </td><td><?php echo round($totalResa,2) ?></td></tr>
+				<tr><td>Restant du mois precedent : </td><td><?php echo $debt ?></td></tr>
+				<tr><td>Reste a paye : </td><td><?php echo round($totalResa+$debt-$validated['amount'],2) ?></td></tr>
+				<tr><td>Total du : </td><td><?php echo round($totaldu,2) ?></td></tr>
 			</table>
 			
 	<?php } ?>

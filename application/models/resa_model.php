@@ -117,14 +117,14 @@ class Resa_model extends CI_Model {
 	}
 
 	function getTotalCost($userId) {
-		$results = array();
+//normandie		$results = array();
 		$sql = "SELECT *";
 		$sql .= " FROM ".$this->resa_table.", ".$this->period_table.", ".$this->child_table.", ".$this->user_table." ";
 		$sql .= " WHERE reservation.child_id=child.id and reservation.period_id=period.id and child.user_id=users.id ";
 		$sql .= " AND users.id = '".$userId."'";
 		$resas = $this->db->query($sql)->result_array();
-		
-		$price = 0;
+
+        $price = 0;
 		foreach ($resas as $resa) {
 			$type = $resa['resa_type'];
 			if( $type==2) {
@@ -135,7 +135,9 @@ class Resa_model extends CI_Model {
 		}	
 		return $price;
 	}
-
+	
+	// Util function /////////////////////////////////////
+	
 	public function getResaSummary($year, $month, $userId) {
 	    $cost = array();
 	    $cost['sum']['resa'] = 0;
@@ -175,23 +177,24 @@ class Resa_model extends CI_Model {
 	    return  $cost;
 	}
 	
-	// Util function /////////////////////////////////////
 	function setResaFromPostData($post) {
 		$date = mktime(0, 0, 0, $post['month'], $post['day'], $post['year']);
 		$resa['date'] = date("Y-m-d", $date);
 		$resa['period_id'] = $post['period'];
 		$resa['child_id'] = $post['child'];
 		
-		$closedMonth = file_get_contents('lastValidate.txt');
+/*normandie		$closedMonth = file_get_contents('lastValidate.txt');
 		$closedWeek = file_get_contents('lastVisit.txt');
 		$closedDate = ($closedMonth>$closedWeek) ? $closedMonth : $closedWeek;
-		
+*/
+		$closedDate = file_get_contents('lastVisit.txt');
 		if ($date >= $closedDate) {
 			$resa['resa_type'] = "1";   								// normal
 		} elseif ($this->session->userdata('privilege')>=2) {			// validee
 			$resa['resa_type'] = "3";									// rajout
 		} else {
-			return FALSE;
+			//return FALSE;              //dday
+		    $resa['resa_type'] = "1";    //dday
 		}
 		return $resa;
 	}
@@ -208,7 +211,7 @@ class Resa_model extends CI_Model {
 		}
 		return $output;
 	}
-
+/*normandie
 	public function get_cost($resas) {
 		$costNum=array();
 		$periodPrices = $this->Period_model->getPeriodPrices();
@@ -241,17 +244,18 @@ class Resa_model extends CI_Model {
 		}
 		return $cost;
 	}
-	
+*/	
+/*normandie
+ 
 	public function getBill($userId, $year, $month) {
 		$monthBilled = date('n', mktime(0, 0, 0, $month-1, 1, $year)); //mois facturé
 		$yearBilled = date('Y', mktime(0, 0, 0, $month-1, 1, $year)); //mois facturé
 		$monthPrevBill = date('n', mktime(0, 0, 0, $month-2, 1, $year)); //mois precedent le mois facturé
 		$yearPrevBill = date('Y', mktime(0, 0, 0, $month-2, 1, $year));
 		
-/*normandie
 		$totalPayment = $this->Payment_model->get_total_payment_where(array('user_id' => $userId, ));
 		$bill['totalPayment'] = $totalPayment['amount'];
-*/
+
 		$bill['totalCost'] = $this->Resa_model->getTotalCost($userId);
 		$bill['restToPay'] = $bill['totalCost'] - $bill['totalPayment'];
 		
@@ -290,6 +294,6 @@ class Resa_model extends CI_Model {
 		
 		return $bill;
 	}
-	
+*/	
 }
 ?>

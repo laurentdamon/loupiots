@@ -2,12 +2,16 @@
 
 class Cost_model extends CI_Model {
 	var $cost_table = 'cost';
+	var $resa_table = 'reservation';
+	var $child_table = 'child';
+	var $user_table = 'users';
+	var $period_table = 'period';
 	
 	public function __construct() {
 		$this->load->database();
 		$this->load->model('Resa_model');
 		$this->load->model('Payment_model');
-		$this->load->model('Balance_model');
+//normandie		$this->load->model('Balance_model');
 	}
 		
 	function create($cost) {
@@ -97,6 +101,7 @@ class Cost_model extends CI_Model {
 //return $return;
 	}
 */	
+/*normandie
 	function getCost($year, $month, $userId) {
 		$cost['sum']['cost'] = 0;
 		$cost['sum']['depassement'] = 0;
@@ -154,7 +159,8 @@ class Cost_model extends CI_Model {
 
 		return $cost;
 	}
-	
+*/
+/*	normandie
 	public function getBalance($year, $month, $userId) {
 		$balance['sum']['resa'] = 0;
 		$balance['sum']['depassement'] = 0;
@@ -198,7 +204,7 @@ class Cost_model extends CI_Model {
 		
 		return $balance;
 	}
-	
+*/	
 	public function setBalance($balanceDate) {
 	    $year = date("Y", $balanceDate);
 	    $month = date("m", $balanceDate);
@@ -244,6 +250,26 @@ class Cost_model extends CI_Model {
 	    }
 
 	    return $cost;
+	}
+	
+	function getMonthBalance($year, $month) {
+	    $sql = "SELECT *";
+	    $sql .= " FROM ".$this->resa_table.", ".$this->period_table.", ".$this->child_table.", ".$this->user_table." ";
+	    $sql .= " WHERE reservation.child_id=child.id and reservation.period_id=period.id and child.user_id=users.id ";
+	    $resas = $this->db->query($sql)->result_array();
+	    
+	    $balance['priceDep'] = 0;
+	    $balance['priceStandard'] = 0;
+	    foreach ($resas as $resa) {
+	        $type = $resa['resa_type'];
+	        if( $type==2) {
+	            $balance['priceStandard'] += $resa['price'];
+	        } elseif($type==3) {
+	            $balance['priceDep'] += LOUP_DEPASSEMENT_PRICE;
+	        }
+	    }
+	    $balance['totalResa'] = $balance['priceDep'] + $balance['priceStandard'];
+	    return $balance;    	    
 	}
 }
 ?>

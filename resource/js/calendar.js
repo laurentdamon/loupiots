@@ -3,7 +3,7 @@ $(document).ready(function() {
 	var siteUrl = $("#siteUrl").text();
 	var getResaCalURL = siteUrl + "/resa/getCalendar";
 	var getResaCostURL = siteUrl + "/resa/getCost";
-	var getResaBillURL = siteUrl + "/resa/getBill";
+//	var getResaBillURL = siteUrl + "/resa/getBill";
 	var createURL = siteUrl + "/resa/create";
 	var deleteURL = siteUrl + "/resa/delete";
 	var $defer = 
@@ -44,6 +44,7 @@ $(document).ready(function() {
 		var text = $(this).text();
 		text = $.trim(text);
 		var data = text.split("-");
+//		alert("period "+data);
 		var $defer = 
 			$.ajax({
 				url : createURL,

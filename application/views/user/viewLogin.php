@@ -28,7 +28,6 @@ if ($now > $nextCloseDate) {
 //	echo "Nouvelle fermeture prevue : ". date('l d M Y H:i:s', $nextCloseDate) ." ". $nextCloseDate ."</br>";
 	touch($lastCloseFileName);
 	file_put_contents($lastCloseFileName, $closeDate);
-	
 }
 
 //echo "check balance closing</br>";
