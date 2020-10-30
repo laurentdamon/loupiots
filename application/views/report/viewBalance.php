@@ -35,12 +35,10 @@
 			</ul>
 		<h4>Reservations</h4>
 			<table border=1>
-				<tr><td>Standard : </td><td> <?php echo round($resa,2) ?></td></tr>
-				<tr><td>Depassement : </td><td> <?php echo round($depassement,2) ?></td></tr>
-				<tr><td>Total reservation : </td><td><?php echo round($totalResa,2) ?></td></tr>
-				<tr><td>Restant du mois precedent : </td><td><?php echo $debt ?></td></tr>
-				<tr><td>Reste a paye : </td><td><?php echo round($totalResa+$debt-$validated['amount'],2) ?></td></tr>
-				<tr><td>Total du : </td><td><?php echo round($totaldu,2) ?></td></tr>
+				<tr><td>&nbsp;</td><td>Nb reservation</td><td>Chiffre d'affaire</td></tr>
+				<tr><td>Standard : </td><td> <?php echo $balance['standard']['numResaStandard'] ?></td><td> <?php echo $balance['standard']['cout'] ?></td></tr>
+				<tr><td>Depassement : </td><td> <?php echo $balance["dep"]['numResaDep'] ?></td><td> <?php echo $balance["dep"]['cout'] ?></td></tr>
+				<tr><td>Total reservation : </td><td><?php echo $balance['totalResa'] ?></td><td> <?php echo $balance['totalResaCout'] ?></td></tr>
 			</table>
 			
 	<?php } ?>

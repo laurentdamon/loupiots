@@ -27,6 +27,7 @@
 		IBAN: FR76 1027 8089 3800 0419 4324 087<br/>
 		BIC: CMCIFR2A<br/>
 		</span>
+		<br>
 		
 		<label for="paymentMonth">Mois pay&eacute; :</label><?php echo strftime("%B %Y", strtotime($date)) ?> 
 		<input type="hidden" name="month" value="<?php echo date("n", strtotime($date)) ?>" /><br/>

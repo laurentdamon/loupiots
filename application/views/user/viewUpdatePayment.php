@@ -28,6 +28,7 @@
 		IBAN: FR76 1027 8089 3800 0419 4324 087<br/>
 		BIC: CMCIFR2A<br/>
 		</span>
+		<br>
     				
     	<label for="paymentMonth">Mois pay&eacute;</label>
    		<?php echo form_dropdown('month', generate_options_array(1,12,'callback_month'), $payment['month'], 'class="InputSelect"'); ?>

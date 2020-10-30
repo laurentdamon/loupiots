@@ -7,8 +7,8 @@ function printDiv(id) {
 }
 
 $(document).ready(function(){
-	$('#forCheque').show();
-	$('#forVir').hide();
+	$('#forCheque').hide();
+	$('#forVir').show("slow");
 	$("#paymentType").change(function() {
 		if (this.value == 'Cheque') {
 			$('#forCheque').show("slow");

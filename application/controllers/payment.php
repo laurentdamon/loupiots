@@ -14,7 +14,7 @@ class payment extends CI_Controller {
 		$this->load->helper('form');
 		$this->load->library('form_validation');
 		
-		$this->payment_types = array('Cheque' => 'Cheque', 'Especes' => 'Especes', 'Virement' => 'Virement');
+		$this->payment_types = array('Virement' => 'Virement', 'Cheque' => 'Cheque', 'Especes' => 'Especes');
 		$this->banks = $this->Bank_model->get_option_banks();
 		$this->payment_status = array(1 => 'En attente de r&eacute;ception');
 		if ($this->session->userdata('privilege') >=2 ) {
@@ -169,7 +169,7 @@ class payment extends CI_Controller {
 				$year = $this->input->post('year');
 				$month = $this->input->post('month');
 				
-				$data = $this->Cost_model->getCost($data['year'], $data['month'], $data['userId']);
+//normandie				$data = $this->Cost_model->getCost($data['year'], $data['month'], $data['userId']);
 				redirect('payment/report?year='.$year.'&month='.$month, 'refresh');
 			} else {
 				redirect('user/'.$data['userId'].'/'.$data['payment']['year'].'/'.$data['payment']['month'], 'refresh');

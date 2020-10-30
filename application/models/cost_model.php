@@ -253,9 +253,14 @@ class Cost_model extends CI_Model {
 	}
 	
 	function getMonthBalance($year, $month) {
-	    $sql = "SELECT *";
-	    $sql .= " FROM ".$this->resa_table.", ".$this->period_table.", ".$this->child_table.", ".$this->user_table." ";
-	    $sql .= " WHERE reservation.child_id=child.id and reservation.period_id=period.id and child.user_id=users.id ";
+//Normandie
+//	    $sql = "SELECT *";
+//	    $sql .= " FROM ".$this->resa_table.", ".$this->period_table.", ".$this->child_table.", ".$this->user_table." ";
+//	    $sql .= " WHERE reservation.child_id=child.id and reservation.period_id=period.id and child.user_id=users.id ";
+	    
+	    $sql = "SELECT count(id) as numResa,resa_type FROM ".$this->resa_table." ";
+	    $sql .= "WHERE YEAR( date ) = '".$year."' AND MONTH( date ) = '".$month."' GROUP BY resa_type";
+	    
 	    $resas = $this->db->query($sql)->result_array();
 	    
 	    $balance['priceDep'] = 0;
@@ -263,12 +268,15 @@ class Cost_model extends CI_Model {
 	    foreach ($resas as $resa) {
 	        $type = $resa['resa_type'];
 	        if( $type==2) {
-	            $balance['priceStandard'] += $resa['price'];
+	            $balance['standard']['numResaStandard'] = $resa['numResa'];
+	            $balance['standard']['cout'] = $balance['standard']['numResaStandard'] * 1.3; // Attention raccourci a voir par un select dans la table period
 	        } elseif($type==3) {
-	            $balance['priceDep'] += LOUP_DEPASSEMENT_PRICE;
+	            $balance["dep"]['numResaDep'] = $resa['numResa'];
+	            $balance["dep"]['cout'] = $resa['numResa'] * LOUP_DEPASSEMENT_PRICE;
 	        }
 	    }
-	    $balance['totalResa'] = $balance['priceDep'] + $balance['priceStandard'];
+	    $balance['totalResa'] = $balance['standard']['numResaStandard'] + $balance["dep"]['numResaDep'];
+	    $balance['totalResaCout'] = $balance['standard']['cout'] + $balance["dep"]['cout'];
 	    return $balance;    	    
 	}
 }

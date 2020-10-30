@@ -193,8 +193,8 @@ class Resa_model extends CI_Model {
 		} elseif ($this->session->userdata('privilege')>=2) {			// validee
 			$resa['resa_type'] = "3";									// rajout
 		} else {
-			//return FALSE;              //dday
-		    $resa['resa_type'] = "1";    //dday
+			return FALSE;              
+		   // $resa['resa_type'] = "1";    //dday
 		}
 		return $resa;
 	}

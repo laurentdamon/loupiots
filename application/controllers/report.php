@@ -399,7 +399,7 @@ class report extends CI_Controller {
     }
     
     public function balance() {
-        $this->output->enable_profiler(TRUE);
+//        $this->output->enable_profiler(TRUE);
         
         $data['title'] = "Balance comptable";
         
@@ -448,18 +448,17 @@ class report extends CI_Controller {
         
         //cout des depassemants du mois precedant
         //normandie $depassementPrev= $this->Resa_model->get_resa_where(array('YEAR(date)' => $prevYear, 'MONTH(date)' => $prevMonth, 'resa_type' => 3 ));
-        $data['depassement'] = $balance['priceDep'];        
+        //$data['depassement'] = $balance['priceDep'];        
         
-        $data["totalResa"]= $data['depassement'] + $data['resa'];
+        //$data["totalResa"]= $data['depassement'] + $data['resa'];
         
         //dettes mois precedent
-        $lastMonthCosts = $this->Cost_model->get_cost_where(array('YEAR(month_paided)' => $prevYear, 'MONTH(month_paided)' => $prevMonth ));
-        $data["debt"]=0;
-        foreach ( $lastMonthCosts as $lastMonthCost ) {
-            $data["debt"] += $lastMonthCost["debt"];
-        }
-        
-        $data["totaldu"]= $data['debt'] + $data["totalResa"];
+        //$lastMonthCosts = $this->Cost_model->get_cost_where(array('YEAR(month_paided)' => $prevYear, 'MONTH(month_paided)' => $prevMonth ));
+        //$data["debt"]=0;
+        //foreach ( $lastMonthCosts as $lastMonthCost ) {
+        //    $data["debt"] += $lastMonthCost["debt"];
+        //}      
+        //$data["totaldu"]= $data['debt'] + $data["totalResa"];
         
         $this->load->view('templates/header', $data);
         $this->load->view('report/viewBalance', $data);
