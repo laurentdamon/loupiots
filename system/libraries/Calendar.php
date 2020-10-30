@@ -94,7 +94,7 @@ class CI_Calendar {
 	 * @return	string	the html to be displayed
 	 */
 	function generate($year = '', $month = '', $data = array(), $forPrint = FALSE) {
-		
+	    $debug ="";
 		// Set the current month/year/day
 		// We use this to determine the "today" date
 		$cur_year	= date("Y", $this->local_time);
@@ -119,16 +119,18 @@ class CI_Calendar {
 		// Determine the total days in the month
 		$total_days = cal_days_in_month(CAL_GREGORIAN, $month1Dig, $year);
 
+//$debug .="total_days: ".$total_days."<br>";		
 		// Set the starting day number
 		$day  = $this->start_day_num +1 - $date["wday"];
 		while ($day > 1) {
 			$day -= 7;
 		}
-		
+//$debug .="starting day number: ".$day."<br>";
 		// Set the starting day of the week
 		$start_days	= array('sunday' => 0, 'monday' => 1, 'tuesday' => 2, 'wednesday' => 3, 'thursday' => 4, 'friday' => 5, 'saturday' => 6);
 		$start_day = ( ! isset($start_days[$this->start_day])) ? 0 : $start_days[$this->start_day];
-
+//$debug .="start_day: ".$start_day."<br>";
+		
 		$is_current_month = ($cur_year == $year AND $cur_month == $month) ? TRUE : FALSE;
 
 		$periods = $data['periods'];
@@ -243,7 +245,6 @@ class CI_Calendar {
 		$out .= $this->temp['period_row_end'];
 		$out .= "\n";
 
-$debug = "";
 		// Build the main body (list of days) of the calendar
 		while ($day <= $total_days) {
 				
@@ -308,7 +309,7 @@ $debug = "";
 					if ($day_name=='Samedi' || $day_name=='Dimanche' || $day_name=='Mercredi') {
 						$out .= "<td class='mid_periodoff'>&nbsp;</td>";
 					} else {
-						if ($currentDay >= 0 AND $currentDay < $total_days) {
+						if ($currentDay > 0 AND $currentDay <= $total_days) {
 							$currentDate = mktime(0,0,0, $month1Dig, $currentDay, $year);
 							$date=date("Y-m-d", $currentDate);
 							
