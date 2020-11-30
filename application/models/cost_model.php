@@ -269,7 +269,7 @@ class Cost_model extends CI_Model {
 	        $type = $resa['resa_type'];
 	        if( $type==2) {
 	            $balance['standard']['numResaStandard'] = $resa['numResa'];
-	            $balance['standard']['cout'] = $balance['standard']['numResaStandard'] * 1.3; // Attention raccourci a voir par un select dans la table period
+	            $balance['standard']['cout'] = $balance['standard']['numResaStandard'] * LOUP_PERIOD_PRICE; // Attention raccourci a voir par un select dans la table period
 	        } elseif($type==3) {
 	            $balance["dep"]['numResaDep'] = $resa['numResa'];
 	            $balance["dep"]['cout'] = $resa['numResa'] * LOUP_DEPASSEMENT_PRICE;
