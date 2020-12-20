@@ -169,7 +169,6 @@ class payment extends CI_Controller {
 				$year = $this->input->post('year');
 				$month = $this->input->post('month');
 				
-//normandie				$data = $this->Cost_model->getCost($data['year'], $data['month'], $data['userId']);
 				redirect('payment/report?year='.$year.'&month='.$month, 'refresh');
 			} else {
 				redirect('user/'.$data['userId'].'/'.$data['payment']['year'].'/'.$data['payment']['month'], 'refresh');
@@ -212,10 +211,6 @@ class payment extends CI_Controller {
 		$data['banks'] = $this->banks;
 		
 		foreach ($data['users'] as $userId => $user) {
-//normandie		    $data['costTotal'][$userId] = $this->Cost_model->getCost($year, $month, $userId, $data['users'][$userId]['children']);
-//		    $data["payments"][$userId] = $data['costTotal'][$userId]["payments"];
-
-		    
 		    $data['costTotal'][$userId] = $this->Resa_model->getResaSummary($year, $month, $userId);
 
 		    $prevDate = strtotime( $year."-".($month-1)."-01" );

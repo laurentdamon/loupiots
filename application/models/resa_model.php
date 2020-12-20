@@ -117,7 +117,6 @@ class Resa_model extends CI_Model {
 	}
 
 	function getTotalCost($userId) {
-//normandie		$results = array();
 		$sql = "SELECT *";
 		$sql .= " FROM ".$this->resa_table.", ".$this->period_table.", ".$this->child_table.", ".$this->user_table." ";
 		$sql .= " WHERE reservation.child_id=child.id and reservation.period_id=period.id and child.user_id=users.id ";
@@ -183,10 +182,6 @@ class Resa_model extends CI_Model {
 		$resa['period_id'] = $post['period'];
 		$resa['child_id'] = $post['child'];
 		
-/*normandie		$closedMonth = file_get_contents('lastValidate.txt');
-		$closedWeek = file_get_contents('lastVisit.txt');
-		$closedDate = ($closedMonth>$closedWeek) ? $closedMonth : $closedWeek;
-*/
 		$closedDate = file_get_contents('lastVisit.txt');
 		if ($date >= $closedDate) {
 			$resa['resa_type'] = "1";   								// normal
@@ -194,7 +189,6 @@ class Resa_model extends CI_Model {
 			$resa['resa_type'] = "3";									// rajout
 		} else {
 			return FALSE;              
-		   // $resa['resa_type'] = "1";    //dday
 		}
 		return $resa;
 	}
@@ -211,89 +205,5 @@ class Resa_model extends CI_Model {
 		}
 		return $output;
 	}
-/*normandie
-	public function get_cost($resas) {
-		$costNum=array();
-		$periodPrices = $this->Period_model->getPeriodPrices();
-		$cost["periodPrices"]=$periodPrices;
-		foreach ($resas as $resa) {
-		    $resaId = $resa['id'];
-			if (isset($resa['price'])) {
-				$periodPrice = $resa['price'];
-			} else {
-				$periodId = $resa["period_id"];
-				$periodPrice = $periodPrices[$periodId];
-			}
-			if ($resa["resa_type"]==3 && $resa["date"] > LOUP_DEPASSEMENT_INITIAL_DATE) {
-				$periodPrice = LOUP_DEPASSEMENT_PRICE;
-			}
-			if (isset($costNum[$periodPrice])) {
-				$numResa = sizeof($costNum[$periodPrice]);
-				$costNum[$periodPrice][$resaId]=$numResa+1;
-			} else {
-				$costNum[$periodPrice][$resaId]=1;
-			}
-		}
-		$separator="";
-		$cost["str"]="&nbsp;";
-		$cost["total"]=0;
-		foreach ($costNum as $price=>$costNum) {
-			$cost["str"] = $cost["str"].$separator.$price."x".sizeof($costNum);
-			$separator=" + ";
-			$cost["total"] += $price*sizeof($costNum);
-		}
-		return $cost;
-	}
-*/	
-/*normandie
- 
-	public function getBill($userId, $year, $month) {
-		$monthBilled = date('n', mktime(0, 0, 0, $month-1, 1, $year)); //mois facturé
-		$yearBilled = date('Y', mktime(0, 0, 0, $month-1, 1, $year)); //mois facturé
-		$monthPrevBill = date('n', mktime(0, 0, 0, $month-2, 1, $year)); //mois precedent le mois facturé
-		$yearPrevBill = date('Y', mktime(0, 0, 0, $month-2, 1, $year));
-		
-		$totalPayment = $this->Payment_model->get_total_payment_where(array('user_id' => $userId, ));
-		$bill['totalPayment'] = $totalPayment['amount'];
-
-		$bill['totalCost'] = $this->Resa_model->getTotalCost($userId);
-		$bill['restToPay'] = $bill['totalCost'] - $bill['totalPayment'];
-		
-		$children = $this->db->get_where('child', array('user_id' => $userId, 'is_active' => true))->result_array();
-		$bill['children']['total']['costResa'] = 0;
-		$bill['children']['total']['costDep'] = 0;
-		$bill['total'] = $bill['restToPay'];
-		foreach ($children as $child) {
-			$childNum=$child['id'];
-			//Resa du mois facturé
-			$resas[$childNum]= $this->Resa_model->get_full_resa_where(array('child_id' => $childNum, 'YEAR(date)' => $yearBilled, 'MONTH(date)' => $monthBilled, 'resa_type !=' => 3 ));
-			if (sizeof($resas[$childNum])>0) {
-				$price = $resas[$childNum][0]['price'];
-				$childResaPrice = sizeof($resas[$childNum])*$price;
-				$bill['children'][$childNum]['costResaStr'] = sizeof($resas[$childNum])." x ".$price." = ".$childResaPrice;
-				$bill['children']['total']['costResa'] += $childResaPrice;				
-			} else {
-				$childResaPrice = 0;
-				$bill['children'][$childNum]['costResaStr'] = "0";
-			}
-			
-			//Dépassement du mois precedant le mois facturé
-			$depassement[$childNum]= $this->Resa_model->get_full_resa_where(array('child_id' => $childNum, 'YEAR(date)' => $yearPrevBill, 'MONTH(date)' => $monthPrevBill, 'resa_type =' => 3 ));
-			if (sizeof($depassement[$childNum])>0) {
-				$childDepPrice = sizeof($depassement[$childNum])*LOUP_DEPASSEMENT_PRICE;
-				$bill['children'][$childNum]['costDepStr'] = sizeof($depassement[$childNum])." x ".LOUP_DEPASSEMENT_PRICE." = ".$childDepPrice;
-				$bill['children']['total']['costDep'] += $childDepPrice;				
-			} else {
-				$childDepPrice = 0;
-				$bill['children'][$childNum]['costDepStr'] = "0";
-			}
-			
-			$bill['children'][$childNum]['sum'] = $childResaPrice + $childDepPrice;
-			$bill['total'] += $bill['children'][$childNum]['sum'];
-		}
-		
-		return $bill;
-	}
-*/	
 }
 ?>

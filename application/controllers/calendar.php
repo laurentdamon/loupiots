@@ -31,18 +31,7 @@ class calendar extends CI_Controller {
 		if ($data['loggedPrivilege'] < 3) {
 			show_404();
 		}
-/*normandie		
-		$file = 'lastValidate.txt';
-		$closedMonthStr = file_get_contents($file);
-		if (!isset($closedMonth) || $closedMonth=="" ) {
-			$closedMonth=0;
-		}
-		$closedMonth = mktime (0, 0, 0, (date("n", $closedMonthStr)-1), 1, date("Y", $closedMonthStr) );
-		
-		$data['closedMonth'] = $closedMonth;
-		$data['month'] = date("n", $closedMonth);
-		$data['year'] = date("Y", $closedMonth);
-*/
+
 		$this->load->view('templates/header', $data);
 		$this->load->view('admin/viewCalendarSetting', $data);
 		$this->load->view('templates/footer');

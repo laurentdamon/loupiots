@@ -144,7 +144,6 @@ class user extends CI_Controller {
 		//Data for facture and payment
 		$data['payment_waiting'] = $this->Payment_model->get_payment_where(array('user_id' => $data['userId'], 'YEAR(payment_date)' => $year, 'MONTH(payment_date)' => $month, 'status !=' => 3 ));
 		$data['payment_validated'] = $this->Payment_model->get_payment_where(array('user_id' => $data['userId'], 'YEAR(month_paided)' => $year, 'MONTH(month_paided)' => $month, 'status' => 3 ));
-		//normandie		$data['bill_old'] = $this->Resa_model->getBill($data['userId'], $year, $month); 
 		
 		//data for previous month resa
 		$prevDate = strtotime( $year."-".($month-1)."-01" );

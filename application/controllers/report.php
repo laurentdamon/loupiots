@@ -233,13 +233,7 @@ class report extends CI_Controller {
                     $bgColor="bgcolor='#bbb'";
                 }
                 $periodId=$period["periodId"];
-/*normandie                if(isset($totalPeriod) && isset($totalPeriod[$daysName])) {
-                    $data["output"] .= "<td $bgColor align='center'>".$totalPeriod[$daysName][$periodId]."</td>\n";
-                    
-                } else {
-                    $data["output"] .= "<td $bgColor align='center'>&nbsp;</td>\n";
-                }
-*/            }
+            }
         }
         $data["output"] .= "</tr>\n";
         
@@ -335,7 +329,6 @@ class report extends CI_Controller {
             $data['dates'][$i]['year'] = date("Y", $curDate);
             $where = array('user_id'=>$data['userId'], 'YEAR(month_paided)' => $curYear, 'MONTH(month_paided)' => $curMonth);
             $data['dates'][$i]['payments'] = $this->Payment_model->get_payment_where($where);
-//normandie            $data['dates'][$i]['monthlyStatus'] = $this->Cost_model->getCost($curYear, $curMonth, $data['userId']);
             $data['dates'][$i]['monthlyStatus'] = $this->Resa_model->getResaSummary($curYear, $curMonth, $data['userId']);
             
             $prevDate = strtotime( $curYear."-".($curMonth-1)."-01" );
@@ -440,26 +433,10 @@ class report extends CI_Controller {
         $data['declared'] = $this->Payment_model->get_total_payment_where($where);
         
         //reservations dues
-        //normandie $resas= $this->Resa_model->get_resa_where(array('YEAR(date)' => $year, 'MONTH(date)' => $month, 'resa_type !=' => 3 ));        
-        //normandie $data['resa'] = $this->Resa_model->get_cost($resas);
         $balance = $this->Cost_model->getMonthBalance($year, $month);
         $data['balance'] = $balance;
         $data['resa'] = $balance['priceStandard'];
-        
-        //cout des depassemants du mois precedant
-        //normandie $depassementPrev= $this->Resa_model->get_resa_where(array('YEAR(date)' => $prevYear, 'MONTH(date)' => $prevMonth, 'resa_type' => 3 ));
-        //$data['depassement'] = $balance['priceDep'];        
-        
-        //$data["totalResa"]= $data['depassement'] + $data['resa'];
-        
-        //dettes mois precedent
-        //$lastMonthCosts = $this->Cost_model->get_cost_where(array('YEAR(month_paided)' => $prevYear, 'MONTH(month_paided)' => $prevMonth ));
-        //$data["debt"]=0;
-        //foreach ( $lastMonthCosts as $lastMonthCost ) {
-        //    $data["debt"] += $lastMonthCost["debt"];
-        //}      
-        //$data["totaldu"]= $data['debt'] + $data["totalResa"];
-        
+                
         $this->load->view('templates/header', $data);
         $this->load->view('report/viewBalance', $data);
         $this->load->view('templates/footer');

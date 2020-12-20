@@ -59,7 +59,7 @@ class CI_Output {
 	/**
 	 * Determines wether profiler is enabled
 	 *
-	 * @var book
+	 * @var bool
 	 * @access 	protected
 	 */
 	protected $enable_profiler	= FALSE;

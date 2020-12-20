@@ -23,8 +23,6 @@ class resa extends CI_Controller {
 			$resaData=$this->Resa_model->setResaFromPostData($_POST);
 			if ($resaData) {
 				$output = $this->Resa_model->create($resaData);
-//				$child = $this->Child_model->get_child_by_id($resaData["child_id"]);
-//nomandie				$this->Cost_model->persistCost($_POST["month"], $_POST["year"], $_POST["child"]);
 			} else {
 				$output=false;
 			}
@@ -32,7 +30,6 @@ class resa extends CI_Controller {
 			$output=false;
 		}
 		$output["resaData"] = $resaData;
-//normandie		$output["POST"] = $_POST;
 		echo $this->my_json_encode(array_values($output));
 	}
 
@@ -42,8 +39,6 @@ class resa extends CI_Controller {
 			$resa=$this->Resa_model->get_resa_where($resa);
 			if ($this->Resa_model->delete($resa[0]["id"])) {
 				$output_string=true;
-//				$child = $this->Child_model->get_child_by_id($resa[0]["child_id"]);
-//normandie				$this->Cost_model->persistCost($_POST["month"], $_POST["year"], $child["user_id"]);
 			} else {
 				$output_string=false;
 			}
