@@ -40,6 +40,7 @@ $(document).ready(function() {
 				});
 			}
 		});
+
 	$(".period").live("click", function() {
 		var text = $(this).text();
 		text = $.trim(text);
@@ -153,6 +154,7 @@ $(document).ready(function() {
 			}
 			});
 	});
+
 
 	$(".period_3").live("click", function() {	// periode en depassement
 		var text = $(this).text();

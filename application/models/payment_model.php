@@ -6,7 +6,7 @@ class Payment_model extends CI_Model {
 	var $user_table = 'users';
 
 	public function __construct() {
-		$this->load->database();
+	    $this->load->database();
 	}
 		
 	function create($payment) {
@@ -75,9 +75,12 @@ class Payment_model extends CI_Model {
 	function setPaymentFromPostData($post) {
 		$payment["user_id"] = $post['user_id'];
 		$payment["amount"] = strtr($post['amount'], ",", ".");
-		$date = mktime(0, 0, 0, $post['month'], 1, $post['year']);
-		$payment['month_paided'] = date("Y-m-d", $date);
-		$payment["payment_date"] = date('Y-m-d');
+		$payment['month_paided'] = $post['month_paided'];
+		if (isset($post['payment_date'])) {
+		    $payment["payment_date"] = $post['payment_date'];
+		} else {
+		    $payment["payment_date"] = date('Y-m-d');
+		}
 		$payment["type"] = $post['type'];
 		$payment["bank_id"] = $post['bank'];
 		if (isset($post['chequeNum']) && $post['chequeNum']!='') {
@@ -87,6 +90,9 @@ class Payment_model extends CI_Model {
 		}
 		if (isset($post['status'])) {
 			$payment["status"] = $post['status'];
+			if ($post['status']==3 && $post['previousStatus']!=3 ) {     //validation
+			    $payment["validation_date"] = date('Y-m-d');
+			}
 		} else {
 			$payment["status"] = 1;
 		}		

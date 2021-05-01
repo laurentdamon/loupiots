@@ -35,14 +35,15 @@
 				<td>Montant total du</td>
 				<td>&nbsp;</td>
 				<td>Montant paye</td>
-				<td>Date de Paiment</td>
+				<td>Date de paiement</td>
+				<td>Date de validation</td>
 				<td>Type</td>
 				<td>Banque</td>
 				<td>Num. cheque</td>
 				<td>Statut</td>
 				<td>&nbsp;</td>
 				<td>Restant du</td>
-				<td><a class="button" href="<?php echo site_url()?>/payment/create/<?php echo $userId?>">Ajouter paiement</a></td>
+				<td><a class="button" href="<?php echo site_url()?>/payment/create/<?php echo $userId?>/1">Ajouter paiement</a></td>
 			</tr>
 			<?php
 			$row=0;
@@ -55,6 +56,8 @@
 					$staus = "Valid&eacute;";
 				} else if ($curPayment['status']==4) {
 					$staus = "Annul&eacute;";
+				} else if ($curPayment['status']==5) {
+				    $staus = "Comptabilis&eacute;";
 				} else {
 					$staus = "-";
 				}
@@ -72,8 +75,14 @@
 				    $bankId = $curPayment['bank_id'];
 				    $bank = $banks[$bankId];
 				}
+				if (!isset($curPayment['validation_date']) || $curPayment['validation_date'] == "0000-00-00") {
+				    $validation_date = "-";
+				} else {
+				    $validation_date = $curPayment['validation_date'];
+                }
 				echo "<td>".$curPayment['amount']."</td>
    						<td>".$curPayment['payment_date']."</td>
+                        <td>".$validation_date."</td>
 						<td>".$curPayment["type"]."</td>
 						<td>".$bank."</td>
 						<td>".$curPayment["cheque_Num"]."</td>

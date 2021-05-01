@@ -73,6 +73,7 @@
 	<table border=1>
 			<tr>
 				<td>&nbsp;</td>
+				<td>Restant du <?php echo $getData['month-1Str'] ?></td>
 				<td>Reservation</td>
 				<td>Depassement</td>
 				<td><b>Total</b></td>
@@ -83,6 +84,7 @@
 					echo "
 						<tr>
 							<td>".$child['name']."</td>
+                            <td>&nbsp;-</td>
 							<td><div class='".$child['id']."-cost'></div></td>
 							<td><div class='".$child['id']."-costDepassement'></div></td>
 							<td><b><div class='".$child['id']."-total'></div></b></td>
@@ -92,6 +94,7 @@
 			?>
 				<tr>
 					<td>Total</td>
+					<td><?php echo $bill['restToPay'] ?></td>
 					<td><div class='cost'></div></td>
 					<td><div class='totalDepassement'></div></td>
 					<td><b><div class='total'></div></b></td>
@@ -138,7 +141,7 @@
 			?>
 				<tr>
 					<td>Total</td>
-					<td><?php echo $bill['restToPay'] ?></td>
+					<td><?php echo $bill['restToPay2'] ?></td>
 					<td><?php echo $bill['sum']['resa'] ?></td>
 					<td><?php echo $bill['sum']['depassement'] ?></td>
 					<td><b><?php echo $bill['sum']['total'] ?></b></td>
@@ -158,7 +161,7 @@
 	
 	<table border=1>
 		<tr>
-			<td>Date d'encaissement</td>
+			<td>Mois payé</td>
 			<td>Date paiement</td>
 			<td>Montant</td>
 			<td>Type</td>
@@ -166,21 +169,7 @@
 			<td>&nbsp;</td>
 		</tr>
 		<?php 
-		foreach ($payment_validated as $curPayment) {
-			echo "	
-				<tr>
-					<td>".$curPayment['month_paided']."</td>
-                    <td>".$curPayment['payment_date']."</td>
-					<td>".$curPayment['amount']."</td>
-					<td>".$curPayment["type"]."</td>
-					<td>Valid&eacute;</td>
-					<td><a class='button' href='".site_url()."/payment/update/".$curPayment["id"]."'>Modifier</a></td>\n
-				</tr>";
-		}
-		if (sizeof($payment_waiting)>0) {
-		    echo "<tr><td colspan=6>En attente de reception</td>";
-		}
-		foreach ($payment_waiting as $curPayment) {
+		foreach ($payment as $curPayment) {
 		    if ($curPayment['status']==1) {
 		        $staus = "En attente de r&eacute;ception";
 		    } else if ($curPayment['status']==2) {
@@ -189,8 +178,10 @@
 		        $staus = "Valid&eacute;";
 		    } else if ($curPayment['status']==4) {
 		        $staus = "Annul&eacute;";
+		    } else if ($curPayment['status']==5) {
+		        $staus = "Comptabilis&eacute;";
 		    } else {
-		        $staus = "En attente de r&eacute;ception";
+		        $staus = "Error";
 		    }
 		    echo "
 				<tr>

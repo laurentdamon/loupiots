@@ -1,6 +1,6 @@
 <div class="holder_content">
 	<h3>Ajouter un paiement</h3>
-<form class="form" method="post" action="<?php echo site_url()?>/payment/create">
+	<form class="form" method="post" action="<?php echo site_url()?>/payment/create">
 	<div>
 
 		<label for="userId">Famille</label>
@@ -29,10 +29,15 @@
 		</span>
 		<br>
 		
-		<label for="paymentMonth">Mois pay&eacute; :</label><?php echo strftime("%B %Y", strtotime($date)) ?> 
-		<input type="hidden" name="month" value="<?php echo date("n", strtotime($date)) ?>" /><br/>
-		<input type="hidden" name="year" value="<?php echo date("Y", strtotime($date)) ?>" /><br/>
-	
+   		<input class="InputText" type="hidden" name="payment_date" value="<?php echo date("Y-m-d"); ?>"/>
+   		<input class="InputText" type="hidden" name="fromReport" value="<?php echo $fromReport; ?>"/>
+   		
+		<label for="month_paided">Mois pay&eacute; :</label>
+              <input type="radio" id="dateChoice1" name="month_paided" value="<?php echo $prevMonth?>" checked>
+              <label for="dateChoice1"><?php echo strftime("%B %Y", strtotime($prevMonth)) ?></label>
+              <input type="radio" id="dateChoice2" name="month_paided" value="<?php echo $month?>">
+              <label for="dateChoice2"><?php echo strftime("%B %Y", strtotime($month)) ?></label>
+		
 		<span>
 		<?php
 			if(validation_errors()) {

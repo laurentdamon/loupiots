@@ -72,7 +72,7 @@ class Cost_model extends CI_Model {
 	        $cost[$userId]['month_paided'] = date("Y-m-d", $balanceDate);
 	        
 	        //Get validated month payment
-	        $payment = $this->Payment_model->get_total_payment_where(array('user_id' => $user['id'], 'YEAR(month_paided)' => $year, 'MONTH(month_paided)' => $month, 'status' => "3" ));
+	        $payment = $this->Payment_model->get_total_payment_where(array('user_id' => $user['id'], 'status' => "3" ));
 	        if (isset($payment['amount'])) {
 	            $cost[$userId]['paid'] = $payment['amount'];
 	        } else {
@@ -92,13 +92,21 @@ class Cost_model extends CI_Model {
 	        
 	        $cost[$userId]['debt'] = round(($previousDebt + $resa['sum']['total'] - $cost[$userId]['paid']),2);
 	        
-	        //Store DB
+	        //Store cost in DB
 	        $DBCost = current($this->Cost_model->get_cost_where(array('user_id' => $user['id'], 'YEAR(month_paided)' => $year, 'MONTH(month_paided)' => $month )));
 	        if($DBCost) {
 	            $this->update($DBCost["id"], $cost[$userId]);
 	        } else {
 	            $this->create($cost[$userId]);
 	        }
+	        
+	        //Update paiement status to comptabilise=5
+	        $payments = $this->Payment_model->get_payment_where(array('user_id' => $user['id'], 'status' => "3" ));
+	        foreach ($payments as $curPayment) {
+	            $curPayment['status'] = 5; //Comptabilisé
+	            $cost['paiementSQL'][] = $this->Payment_model->update($curPayment['id'], $curPayment);
+	        }
+	
 	        $cost[$userId]['debug'] = "previousDebt: ".$previousDebt." + resa: ".$resa['sum']['total']." - paid: ".$cost[$userId]['paid']."<br>";
 	    }
 
@@ -124,8 +132,14 @@ class Cost_model extends CI_Model {
 	            $balance["dep"]['cout'] = $resa['numResa'] * LOUP_DEPASSEMENT_PRICE;
 	        }
 	    }
-	    $balance['totalResa'] = $balance['standard']['numResaStandard'] + $balance["dep"]['numResaDep'];
-	    $balance['totalResaCout'] = $balance['standard']['cout'] + $balance["dep"]['cout'];
+	    $balance['totalResa'] = $balance['standard']['numResaStandard'];
+	    if (isset($balance["dep"]['numResaDep'])) {
+	        $balance['totalResa'] += $balance["dep"]['numResaDep'];
+	    }
+	    $balance['totalResaCout'] = $balance['standard']['cout'];
+	    if (isset($balance["dep"]['cout'])) {
+	        $balance['totalResa'] += $balance["dep"]['cout'];
+	    }
 	    return $balance;    	    
 	}
 }

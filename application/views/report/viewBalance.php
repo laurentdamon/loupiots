@@ -24,6 +24,8 @@
 //echo "<br>";
 //echo $sql;
 
+//echo $month;
+
 ?>
 
 	<?php if ($loggedPrivilege == 3) { 		?>
@@ -37,7 +39,7 @@
 			<table border=1>
 				<tr><td>&nbsp;</td><td>Nb reservation</td><td>Chiffre d'affaire</td></tr>
 				<tr><td>Standard : </td><td> <?php echo $balance['standard']['numResaStandard'] ?></td><td> <?php echo $balance['standard']['cout'] ?></td></tr>
-				<tr><td>Depassement : </td><td> <?php echo $balance["dep"]['numResaDep'] ?></td><td> <?php echo $balance["dep"]['cout'] ?></td></tr>
+				<tr><td>Depassement : </td><td> <?php  if (isset($balance["dep"]['numResaDep'])) {echo $balance["dep"]['numResaDep'];} ?></td><td> <?php  if (isset($balance["dep"]['cout'])) {echo $balance["dep"]['cout'];} ?></td></tr>
 				<tr><td>Total reservation : </td><td><?php echo $balance['totalResa'] ?></td><td> <?php echo $balance['totalResaCout'] ?></td></tr>
 			</table>
 			

@@ -1,4 +1,74 @@
 *********************************
+V2021.03
+*********************************
+Feature:
+--------
+-  Lors de l'édition de la facture le 1er de chaque mois, tous les paiements validés 
+   jusqu'au dernier jour du mois précédent sont pris en compte.
+   
+Script de mise à jour:
+----------------------------------
+$date[] = array("year" => "2020","month"=> "8");
+$date[] = array("year" => "2020","month"=> "9");
+$date[] = array("year" => "2020","month"=> "10");
+$date[] = array("year" => "2020","month"=> "11");
+$date[] = array("year" => "2020","month"=> "12");
+$date[] = array("year" => "2021","month"=> "1");
+$date[] = array("year" => "2021","month"=> "2");
+$date[] = array("year" => "2021","month"=> "3");
+
+$users = $this->User_model->get_users(TRUE);
+
+foreach ($users as $user) {
+    foreach ($date as $curDate) {
+        $where = array('user_id'=>$user['id'], 'YEAR(month_paided)' => $curDate['year'], 'MONTH(month_paided)' => $curDate['month'], 'status' => 3 );
+        $payments = $this->Payment_model->get_payment_where($where);
+        $totPayment = 0;
+        foreach ($payments as $payment) {
+            $totPayment += $payment["amount"];
+        }
+        print("<br>");
+        //Get month paid resa
+        $bill = $this->Resa_model->getResaSummary($curDate['year'], $curDate['month'], $user['id']);
+        //Get month paid debt
+        $DBCost = current($this->Cost_model->get_cost_where(array('user_id' => $user['id'], 'YEAR(month_paided)' => $curDate['year'], 'MONTH(month_paided)' => $curDate['month'] )));
+        $DBCostPrev = current($this->Cost_model->get_cost_where(array('user_id' => $user['id'], 'YEAR(month_paided)' => $curDate['year'], 'MONTH(month_paided)' => $curDate['month']-1 )));
+        if(!$DBCostPrev) {
+            $DBCostPrev["debt"]=0;
+        }
+        $cost['month_paided'] = date("Y-m-d", mktime(0, 0, 0, $curDate['month'], 1, $curDate['year']));
+        $cost['paid'] = $totPayment;
+        $cost['user_id'] = $user['id'];
+        $cost['debt'] = round(($DBCostPrev["debt"] + $bill['sum']['total'] - $totPayment),2);
+        if($DBCost) {
+            
+            $this->Cost_model->update($DBCost["id"], $cost);
+            print_r($DBCost);
+            print("<br>");
+            echo "update: ".$user['id']." ".$curDate['year']." ".$curDate['month']." => ".$DBCostPrev["debt"]." + ".$bill['sum']['total']." - ".$totPayment."<br>";
+            print_r($cost);
+            print("<br>");
+        } else {
+            $this->Cost_model->create($cost);
+            echo "create: ".$user['id']." ".$curDate['year']." ".$curDate['month']." => ".$bill['sum']['total']." - ".$totPayment."<br>";
+        }        
+    }
+}
+
+echo "<br>";
+------------------------------------------------------------
+
+*********************************
+V2020.12
+*********************************
+Feature:
+--------
+- Change payment model: Ajout de la colonne validation date et du statut 5: Comptabilisé
+	ALTER TABLE `payment` ADD `validation_date` DATE NOT NULL AFTER `payment_date`;
+	
+	UPDATE `payment` SET `status` = '5' WHERE `month_paided` = '2020-09-01' 
+
+*********************************
 V2016.05
 *********************************
 Feature:

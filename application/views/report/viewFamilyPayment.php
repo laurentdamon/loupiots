@@ -61,8 +61,10 @@
 						$staus = "Valid&eacute;";
 					} else if ($payment['status']==4) {
 						$staus = "Annul&eacute;";
+					} else if ($payment['status']==5) {
+					    $staus = "Comptabilis&eacute;";
 					} else {
-						$staus = "En attente de r&eacute;ception";
+						$staus = "Error";
 					}
 					echo "
 					<td>".$payment['amount']."</td>

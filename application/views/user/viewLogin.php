@@ -46,13 +46,57 @@ $nextBalanceDate=date(strtotime('+1 month', $lastBalanceDate));
 //echo "Prochaine balance prevue : ". date('l d M Y H:i:s', $nextBalanceDate) ." ". $nextBalanceDate ."</br>";
 if ($now > $nextBalanceDate) {
     //Update net balance date file with current date
-
     file_put_contents($lastBalanceFileName, date("l d M Y H:i:s.", $nextBalanceDate));
     touch($lastBalanceFileName, $nextBalanceDate);
-    $sql = $this->Cost_model->setBalance($lastBalanceDate);
+//    $cost = $this->Cost_model->setBalance($lastBalanceDate);
+    
+//    print_r($cost);
+}
+/*
+$date[] = array("year" => "2021","month"=> "4");
+$date[] = array("year" => "2021","month"=> "5");
 
+$users = $this->User_model->get_users(TRUE);
+
+foreach ($users as $user) {
+    foreach ($date as $curDate) {
+        $where = array('user_id'=>$user['id'], 'YEAR(month_paided)' => $curDate['year'], 'MONTH(month_paided)' => $curDate['month'], 'status' => 3 );
+        $payments = $this->Payment_model->get_payment_where($where);
+        $totPayment = 0;
+        foreach ($payments as $payment) {
+            $totPayment += $payment["amount"];
+        }
+        print("<br>");
+        //Get month paid resa
+        $bill = $this->Resa_model->getResaSummary($curDate['year'], $curDate['month'], $user['id']);
+        //Get month paid debt
+        $DBCost = current($this->Cost_model->get_cost_where(array('user_id' => $user['id'], 'YEAR(month_paided)' => $curDate['year'], 'MONTH(month_paided)' => $curDate['month'] )));
+        $prevDate = date("Y-m-d", mktime(0, 0, 0, $curDate['month']-1, 1, $curDate['year']));
+        $prevDateList = explode("-",$prevDate);
+        $DBCostPrev = current($this->Cost_model->get_cost_where(array('user_id' => $user['id'], 'YEAR(month_paided)' => $prevDateList[0], 'MONTH(month_paided)' => $prevDateList[1] )));
+        if(!$DBCostPrev) {
+            $DBCostPrev["debt"]=0;
+        }
+        $cost['month_paided'] = date("Y-m-d", mktime(0, 0, 0, $curDate['month'], 1, $curDate['year']));
+        $cost['paid'] = $totPayment;
+        $cost['user_id'] = $user['id'];
+        $cost['debt'] = round(($DBCostPrev["debt"] + $bill['sum']['total'] - $totPayment),2);
+        if($DBCost) {
+            $this->Cost_model->update($DBCost["id"], $cost);
+            print_r($DBCost);
+            print("<br>");
+            echo "update: ".$user['id']." ".$curDate['year']." ".$curDate['month']." => ".$DBCostPrev["debt"]." + ".$bill['sum']['total']." - ".$totPayment."<br>";
+            print_r($cost);
+            print("<br>");
+        } else {
+            $this->Cost_model->create($cost);
+            echo "create: ".$user['id']." ".$curDate['year']." ".$curDate['month']." => ".$bill['sum']['total']." - ".$totPayment."<br>";
+        }
+    }
 }
 
+echo "<br>";
+*/
 ?>
 
 <div class="holder_content">

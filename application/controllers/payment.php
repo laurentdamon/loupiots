@@ -6,6 +6,7 @@ class payment extends CI_Controller {
 		parent::__construct();
 		$this->load->model('User_model');
 		$this->load->model('Payment_model');
+		$this->load->model('Resa_model');
 		$this->load->model('Bank_model');
 		$this->load->model('Cost_model');
 		$this->load->model('Child_model');
@@ -23,6 +24,7 @@ class payment extends CI_Controller {
 		if ($this->session->userdata('privilege') == 3 ) {
 			$this->payment_status[3] = 'Valid&eacute;';
 			$this->payment_status[4] = 'Annul&eacute;';
+			$this->payment_status[5] = 'Comptabilis&eacute;';
 		}
 	}
 
@@ -30,7 +32,7 @@ class payment extends CI_Controller {
 		
 	}
 	
-	public function create($userId='') {
+	public function create($userId='',$fromReport=0) {
 //		$this->output->enable_profiler(TRUE);
 		
 		//check access rights
@@ -40,6 +42,8 @@ class payment extends CI_Controller {
 		} else {
 			$data['userId'] = $this->input->post('user_id');
 		}
+		
+		$data['fromReport'] = $fromReport;
 		
 		if (!isset($data['loggedId']) || !is_numeric($data['loggedId']) ) {
 			show_404();
@@ -53,7 +57,10 @@ class payment extends CI_Controller {
 		$data['payment_types'] = $this->payment_types;
 		$data['payment_status'] = $this->payment_status;
 		$data['banques'] = $this->banks;
-		$data['date'] = date("Y-n-j", strtotime('previous month'));
+		$data['prevMonth'] = date("Y-m-d", strtotime('previous month'));
+		if (date("j", strtotime('now')) <= 6) {  // Choix du mois courant entre le 1 et le 6
+		    $data['month'] = date("Y-m-d", strtotime('now'));
+		}
 
 		$data['loggedPrivilege'] = $this->session->userdata('privilege');
 		if ($data['loggedPrivilege'] >= 2) {
@@ -63,7 +70,7 @@ class payment extends CI_Controller {
 			$data['usersOption'] = $this->User_model->get_option_users($data['loggedId']);
 		}
 		
-		$this->form_validation->set_rules('amount', 'Montant', 'trim|required|xss_clean');
+		$this->form_validation->set_rules('amount', 'Montant', 'numeric');
 		$this->form_validation->set_rules('type', 'Type', 'trim|required|xss_clean');
 		$this->form_validation->set_rules('month', 'Mois payé', 'numeric');
 		//$this->form_validation->set_rules('exist', 'paiement deja enregistré', 'callback_already_exists');
@@ -78,45 +85,27 @@ class payment extends CI_Controller {
  			$this->load->view('user/viewCreatePayment', $data);
  			$this->load->view('templates/footer');
 		} else {
-			redirect('user/'.$_POST['user_id'].'/'.$_POST['year'].'/'.$_POST['month'], 'refresh');
+		    if ( $_POST['fromReport']==1 ) {
+		        redirect('payment/report?year='.date("Y", strtotime($_POST['month_paided'])).'&month='.date("n", strtotime($_POST['month_paided'])), 'refresh');
+		    } else {
+		        redirect('user/'.$_POST['user_id'].'/'.date("Y", strtotime($_POST['month_paided'])).'/'.date("n", strtotime($_POST['month_paided']+1)), 'refresh');
+		    }
 		}
 		
 	}
 
 	public function update($paymentId='',$fromReport=0) {
-		//$this->output->enable_profiler(TRUE);
+//		$this->output->enable_profiler(TRUE);
 		
 		$data['title'] = 'Modifier un paiement';
 
 		$data['payment'] = $this->Payment_model->get_payment($paymentId);
-		$data['payment']['month'] = date("n", strtotime($data['payment']['month_paided']));
-		$data['payment']['year'] = date("Y", strtotime($data['payment']['month_paided']));
-		$previousPaymentStatus=$data['payment']["status"];
+		$data['payment']['user'] = $this->User_model->get_users(FALSE, $data['payment']['user_id']);
 		
 		$data['payment_types'] = $this->payment_types;
 		$data['payment_status'] = $this->payment_status;
 		$data['banques'] = $this->banks;
 
-		$year = $this->input->post('year');
-		$month = $this->input->post('month');
-		if ($month=="" || $year=="") {
-			$year=date("Y");
-			$month=date("n");
-		}
-		$data['month'] = $month;
-		$data['year'] = $year;
-		
-		$data['users'] = $this->User_model->get_users();
-		$data["payments"] =array();
-		foreach ($data['users'] as $user) {
-			$userId = $user["id"];
-			$where = array('user_id'=>$userId, 'YEAR(month_paided)' => $year, 'MONTH(month_paided)' => $month);
-			$payment = $this->Payment_model->get_payment_where($where);
-			$cost = $this->Cost_model->get_cost_where($where);
-			$data["payments"][$userId]=$payment;
-			$data["costs"][$userId]=current($cost);
-		}
-		
 		$data['fromReport'] = $fromReport;
 
 		//check access rights
@@ -135,14 +124,6 @@ class payment extends CI_Controller {
 			show_404();
 		}
 
-		$data['loggedPrivilege'] = $this->session->userdata('privilege');
-		if ($data['loggedPrivilege'] >= 2) {
-			$data['usersOption'] = $this->User_model->get_option_users();
-			$selId = $this->input->post('selId');
-		} else {
-			$data['usersOption'] = $this->User_model->get_option_users($data['loggedId']);
-		}
-		
 		$this->form_validation->set_rules('amount', 'Montant', 'trim|required|xss_clean');
 		$this->form_validation->set_rules('type', 'Type', 'trim|required|xss_clean');
 		$this->form_validation->set_rules('month', 'Mois payé', 'numeric');
@@ -150,13 +131,35 @@ class payment extends CI_Controller {
 		if ($this->form_validation->run() !== FALSE) {
 			$payment = $this->Payment_model->setPaymentFromPostData($_POST);
 			$this->Payment_model->update($paymentId, $payment);
-
-			//store or update cost + debt
-/*normandie
-			if ($payment["status"]==3  || $previousPaymentStatus==3) {
-				$this->Cost_model->storeOnPaymentUpdate($payment);	
+			if ($_POST['status']==3 && $_POST['previousStatus']!=3 ) {     //validation
+			    //modifier le debit du mois de paiment
+			    $cost['user_id'] = $payment["user_id"];
+			    $cost['month_paided'] = $payment['month_paided'];
+			    //Get month paid resa
+			    list($year, $month, $day) = explode("-", $cost['month_paided']);
+			    $bill = $this->Resa_model->getResaSummary($year, $month, $payment['user_id']);
+			    //Get month paid debt
+			    $DBCost = current($this->Cost_model->get_cost_where(array('user_id' => $payment["user_id"], 'month_paided' => $payment['month_paided'] )));
+			    if($DBCost) {
+			        $cost['debt'] = round(($DBCost["debt"] + $bill['sum']['total'] - $payment["amount"]),2);
+			        $this->Cost_model->update($DBCost["id"], $cost);
+			    } else {
+			        $cost['debt'] = round(($bill['sum']['total']  - $payment["amount"]),2);
+			        $this->Cost_model->create($cost);
+			    }
 			}
-*/			
+			if ($_POST['status']==4 && $_POST['previousStatus']==3 ) {     //annulation
+			    //modifier le debit du mois de paiment
+			    //Get month paid resa
+			    list($year, $month, $day) = explode("-", $payment['month_paided']);
+			    $bill = $this->Resa_model->getResaSummary($year, $month, $payment['user_id']);
+			    //Get current month debt
+			    $DBCost = current($this->Cost_model->get_cost_where(array('user_id' => $payment["user_id"], 'month_paided' => $payment['payment_date'] )));
+			    if($DBCost) {
+			        $DBCost['debt'] = round(($DBCost["debt"] + $bill['sum']['total'] + $payment["amount"]),2);
+			        $this->Cost_model->update($DBCost["id"], $DBCost);
+			    }
+			}
 		}
 
 		if ( sizeof($_POST)==0 ) {
@@ -166,15 +169,11 @@ class payment extends CI_Controller {
 		} else {
 			if ( $fromReport==1 ) {
 				$data['userId'] = $this->input->post('user_id');
-				$year = $this->input->post('year');
-				$month = $this->input->post('month');
-				
-				redirect('payment/report?year='.$year.'&month='.$month, 'refresh');
-			} else {
-				redirect('user/'.$data['userId'].'/'.$data['payment']['year'].'/'.$data['payment']['month'], 'refresh');
+				redirect('payment/report?year='.date("Y", strtotime($data['payment']['payment_date'])).'&month='.date("n", strtotime($data['payment']['payment_date'])), 'refresh');
+			} else {  
+			    redirect('user/'.$data['userId'].'/'.date("Y", strtotime($data['payment']['payment_date'])).'/'.date("n", strtotime($data['payment']['payment_date'])), 'refresh');
 			}
-		}
-		
+		}		
 	}
 	
 	public function report() {
