@@ -55,6 +55,7 @@ if ($now > $nextBalanceDate) {
 /*
 $date[] = array("year" => "2021","month"=> "4");
 $date[] = array("year" => "2021","month"=> "5");
+$date[] = array("year" => "2021","month"=> "6");
 
 $users = $this->User_model->get_users(TRUE);
 

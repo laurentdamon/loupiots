@@ -32,7 +32,9 @@ foreach ($users as $user) {
         $bill = $this->Resa_model->getResaSummary($curDate['year'], $curDate['month'], $user['id']);
         //Get month paid debt
         $DBCost = current($this->Cost_model->get_cost_where(array('user_id' => $user['id'], 'YEAR(month_paided)' => $curDate['year'], 'MONTH(month_paided)' => $curDate['month'] )));
-        $DBCostPrev = current($this->Cost_model->get_cost_where(array('user_id' => $user['id'], 'YEAR(month_paided)' => $curDate['year'], 'MONTH(month_paided)' => $curDate['month']-1 )));
+        $prevDate = date("Y-m-d", mktime(0, 0, 0, $curDate['month']-1, 1, $curDate['year']));
+        $prevDateList = explode("-",$prevDate);
+        $DBCostPrev = current($this->Cost_model->get_cost_where(array('user_id' => $user['id'], 'YEAR(month_paided)' => $prevDateList[0], 'MONTH(month_paided)' => $prevDateList[1] )));
         if(!$DBCostPrev) {
             $DBCostPrev["debt"]=0;
         }
@@ -41,7 +43,6 @@ foreach ($users as $user) {
         $cost['user_id'] = $user['id'];
         $cost['debt'] = round(($DBCostPrev["debt"] + $bill['sum']['total'] - $totPayment),2);
         if($DBCost) {
-            
             $this->Cost_model->update($DBCost["id"], $cost);
             print_r($DBCost);
             print("<br>");
@@ -51,11 +52,12 @@ foreach ($users as $user) {
         } else {
             $this->Cost_model->create($cost);
             echo "create: ".$user['id']." ".$curDate['year']." ".$curDate['month']." => ".$bill['sum']['total']." - ".$totPayment."<br>";
-        }        
+        }
     }
 }
 
 echo "<br>";
+
 ------------------------------------------------------------
 
 *********************************

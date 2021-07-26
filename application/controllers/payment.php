@@ -58,9 +58,7 @@ class payment extends CI_Controller {
 		$data['payment_status'] = $this->payment_status;
 		$data['banques'] = $this->banks;
 		$data['prevMonth'] = date("Y-m-d", strtotime('previous month'));
-		if (date("j", strtotime('now')) <= 6) {  // Choix du mois courant entre le 1 et le 6
-		    $data['month'] = date("Y-m-d", strtotime('now'));
-		}
+		$data['month'] = date("Y-m-d", strtotime('now'));
 
 		$data['loggedPrivilege'] = $this->session->userdata('privilege');
 		if ($data['loggedPrivilege'] >= 2) {
